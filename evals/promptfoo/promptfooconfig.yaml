@@ -1,0 +1,109 @@
+# OpenCode Team Harness — Eval Configuration (EI-6)
+# Local file assertions only — no network access required (EI-7)
+# Run: npx promptfoo eval (no global install, CC-2)
+
+prompts: []
+providers: []
+
+tests:
+  # ── Identity Refactor: no Claude Code references (EI-3) ──
+  - description: "No Claude Code in README.md"
+    assert:
+      - type: not-contains
+        value: "Claude Code"
+        file: "../../README.md"
+  - description: "No Claude Code in README_KO.md"
+    assert:
+      - type: not-contains
+        value: "Claude Code"
+        file: "../../README_KO.md"
+  - description: "No Claude Code in README_JA.md"
+    assert:
+      - type: not-contains
+        value: "Claude Code"
+        file: "../../README_JA.md"
+  - description: "No Claude in index.html"
+    assert:
+      - type: not-contains
+        value: "Claude"
+        file: "../../index.html"
+  - description: "No Claude in privacy.html"
+    assert:
+      - type: not-contains
+        value: "Claude"
+        file: "../../privacy.html"
+  - description: "No .claude-plugin directory"
+    assert:
+      - type: not-exists
+        value: "../../.claude-plugin"
+
+  # ── Generated structure: file existence (EI-2) ──
+  - description: "AGENTS.md exists at root"
+    assert:
+      - type: file-exists
+        value: "../../AGENTS.md"
+  - description: "Architecture doc exists"
+    assert:
+      - type: file-exists
+        value: "../../docs/agentic-development/team-architecture.md"
+  - description: "Eval strategy exists"
+    assert:
+      - type: file-exists
+        value: "../../docs/agentic-development/eval-strategy.md"
+  - description: "OpenCode compat doc exists"
+    assert:
+      - type: file-exists
+        value: "../../docs/compatibility/opencode.md"
+  - description: "Portable agents doc exists"
+    assert:
+      - type: file-exists
+        value: "../../docs/compatibility/portable-agents.md"
+
+  # ── Templates exist ──
+  - description: "AGENTS.md template exists"
+    assert:
+      - type: file-exists
+        value: "../../skills/harness/templates/AGENTS.md"
+  - description: "Agent template exists"
+    assert:
+      - type: file-exists
+        value: "../../skills/harness/templates/agent.md"
+  - description: "Skill template exists"
+    assert:
+      - type: file-exists
+        value: "../../skills/harness/templates/skill.md"
+
+  # ── MezaOS example exists (reference only) ──
+  - description: "MezaOS example exists"
+    assert:
+      - type: file-exists
+        value: "../../examples/mezaos/README.md"
+  - description: "MezaOS kernel agent exists"
+    assert:
+      - type: file-exists
+        value: "../../examples/mezaos/kernel/agent.md"
+  - description: "MezaOS drivers agent exists"
+    assert:
+      - type: file-exists
+        value: "../../examples/mezaos/drivers/agent.md"
+  - description: "MezaOS scheduler agent exists"
+    assert:
+      - type: file-exists
+        value: "../../examples/mezaos/scheduler/agent.md"
+
+  # ── Template placeholders: deterministic (AG-8, CC-3) ──
+  - description: "AGENTS.md template has placeholders"
+    assert:
+      - type: contains
+        value: "{{TEAM_NAME}}"
+        file: "../../skills/harness/templates/AGENTS.md"
+  - description: "Agent template has placeholders"
+    assert:
+      - type: contains
+        value: "{{AGENT_NAME}}"
+        file: "../../skills/harness/templates/agent.md"
+  - description: "Skill template has frontmatter"
+    assert:
+      - type: contains
+        value: "name:"
+        file: "../../skills/harness/templates/skill.md"

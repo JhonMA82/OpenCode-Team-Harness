@@ -1,1 +1,5 @@
-.DS_Store
+# SDD local cache (regenerated per session)
+.atl/
+
+# npm
+node_modules/
