@@ -4,219 +4,221 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Fork-Opencode_Port-orange.svg" alt="Fork">
-  <img src="https://img.shields.io/badge/Changed-Agent_Team→Parallel_Tasks-red.svg" alt="Architecture Change">
+  <img src="https://img.shields.io/badge/Changed-Agent_Team→Parallel_Tasks-red.svg" alt="Cambio de Arquitectura">
 </p>
 
-> ⚠️ **Opencode Port**: This is an Opencode-adapted version of [revfactory/harness](https://github.com/JhonMA82/OpenCode-Team-Harness).
-> - **Architecture**: Agent Teams → Parallel Tasks
-> - **Compatibility**: Opencode only (NOT compatible with Claude Code)
-> - See [CHANGES.md](CHANGES.md) for full details.
+> ⚠️ **Port a OpenCode**: Versión adaptada a OpenCode de [revfactory/harness](https://github.com/JhonMA82/OpenCode-Team-Harness).
+> - **Arquitectura**: Agent Teams → Parallel Tasks
+> - **Compatibilidad**: Solo OpenCode (NO compatible con Claude Code)
+> - Ver [CHANGES.md](CHANGES.md) para detalles completos.
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Version-1.0.1-brightgreen.svg" alt="Version">
-  <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" alt="License"></a>
-  <img src="https://img.shields.io/badge/Opencode-Skill-blue.svg" alt="Opencode Skill">
-  <img src="https://img.shields.io/badge/Patterns-6_Architectures-orange.svg" alt="6 Architecture Patterns">
-  <img src="https://img.shields.io/badge/Mode-Parallel_Tasks-orange.svg" alt="Parallel Tasks">
-  <a href="https://github.com/JhonMA82/OpenCode-Team-Harness/stargazers"><img src="https://img.shields.io/github/stars/revfactory/harness?style=social" alt="GitHub Stars"></a>
+  <img src="https://img.shields.io/badge/Version-1.0.1-brightgreen.svg" alt="Versión">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" alt="Licencia"></a>
+  <img src="https://img.shields.io/badge/Opencode-Skill-blue.svg" alt="Skill de OpenCode">
+  <img src="https://img.shields.io/badge/Patterns-6_Architectures-orange.svg" alt="6 Patrones de Arquitectura">
+  <img src="https://img.shields.io/badge/Mode-Parallel_Tasks-orange.svg" alt="Tareas en Paralelo">
+  <a href="https://github.com/JhonMA82/OpenCode-Team-Harness/stargazers"><img src="https://img.shields.io/github/stars/revfactory/harness?style=social" alt="Estrellas en GitHub"></a>
 </p>
 
 # Harness
 
-**Agent Team & Skill Architect** — Opencode Skill
+**Arquitecto de Equipos y Skills** — Skill de OpenCode
 
-**English** | [한국어](README_KO.md) | [日本語](README_JA.md)
+Un meta-skill que diseña equipos de agentes especializados por dominio, define agentes y genera las skills que utilizan.
 
-A meta-skill that designs domain-specific agent teams, defines specialized agents, and generates the skills they use.
+## Visión General
 
-## Overview
+Harness aprovecha el sistema de tareas en paralelo de OpenCode para descomponer tareas complejas en equipos coordinados de agentes especializados. Con solo decir "construye un harness para este proyecto", genera automáticamente definiciones de agentes (`.opencode/agents/`) y skills (`.opencode/skills/`) adaptadas a tu dominio.
 
-Harness leverages OpenCode's parallel task system to decompose complex tasks into coordinated teams of specialized agents. Say "build a harness for this project" and it automatically generates agent definitions (`.opencode/agents/`) and skills (`.opencode/skills/`) tailored to your domain.
+## Características Principales
 
-## Key Features
+- **Diseño de Equipos** — 6 patrones arquitectónicos: Pipeline, Fan-out/Fan-in, Expert Pool, Productor-Revisor, Supervisor y Delegación Jerárquica
+- **Generación de Skills** — Genera skills automáticas con Divulgación Progresiva para una gestión eficiente del contexto
+- **Orquestación** — Paso de datos entre agentes, manejo de errores y protocolos de coordinación
+- **Validación** — Verificación de disparadores, pruebas en seco y tests comparativos con/sin skill
 
-- **Agent Team Design** — 6 architectural patterns: Pipeline, Fan-out/Fan-in, Expert Pool, Producer-Reviewer, Supervisor, and Hierarchical Delegation
-- **Skill Generation** — Auto-generates skills with Progressive Disclosure for efficient context management
-- **Orchestration** — Inter-agent data passing, error handling, and team coordination protocols
-- **Validation** — Trigger verification, dry-run testing, and with-skill vs without-skill comparison tests
-
-## Workflow
+## Flujo de Trabajo
 
 ```
-Phase 1: Domain Analysis
+Fase 1: Análisis de Dominio
     ↓
-Phase 2: Team Architecture Design (Agent Teams vs Subagents)
+Fase 2: Diseño de Arquitectura del Equipo (Agent Teams vs Subagents)
     ↓
-Phase 3: Agent Definition Generation (.opencode/agents/)
+Fase 3: Generación de Definiciones de Agentes (.opencode/agents/)
     ↓
-Phase 4: Skill Generation (.opencode/skills/)
+Fase 4: Generación de Skills (.opencode/skills/)
     ↓
-Phase 5: Integration & Orchestration
+Fase 5: Integración y Orquestación
     ↓
-Phase 6: Validation & Testing
+Fase 6: Validación y Pruebas
 ```
 
-## Installation
+## Instalación
 
-### Direct Installation as Global Skill
+### Instalación Directa como Skill Global
 
 ```shell
-# Copy the skills directory to ~/.config/opencode/skills/
+# Copia el directorio skills a ~/.config/opencode/skills/
 cp -r skills/harness ~/.config/opencode/skills/harness
 ```
 
-## Plugin Structure
+## Estructura del Plugin
 
 ```
 harness/
 ├── skills/
 │   └── harness/
-│       ├── SKILL.md                # Main skill definition (6-Phase workflow)
+│       ├── SKILL.md                # Definición principal de la skill (flujo de 6 fases)
 │       └── references/
-│           ├── agent-design-patterns.md   # 6 architectural patterns
-│           ├── orchestrator-template.md   # Team/subagent orchestrator templates
-│           ├── team-examples.md           # 5 real-world team configurations
-│           ├── skill-writing-guide.md     # Skill authoring guide
-│           ├── skill-testing-guide.md     # Testing & evaluation methodology
-│           └── qa-agent-guide.md          # QA agent integration guide
+│           ├── agent-design-patterns.md   # 6 patrones arquitectónicos
+│           ├── orchestrator-template.md   # Plantillas de orquestación
+│           ├── team-examples.md           # 5 configuraciones de equipos reales
+│           ├── skill-writing-guide.md     # Guía de autoría de skills
+│           ├── skill-testing-guide.md     # Metodología de pruebas y evaluación
+│           └── qa-agent-guide.md          # Guía de integración del agente QA
 └── README.md
 ```
 
-## Usage
+## Uso
 
-Trigger in OpenCode with prompts like:
+Actívalo en OpenCode con frases como:
 
 ```
-Build a harness for this project
-Design an agent team for this domain
-Set up a harness
+Construye un harness para este proyecto
+Diseña un equipo de agentes para este dominio
+Configura un harness
 ```
 
-### Execution Modes
+### Modos de Ejecución
 
-| Mode | Description | Recommended For |
-|------|-------------|-----------------|
-| **Parallel Tasks** (default) | Task tool with `run_in_background: true` | 2+ agents requiring collaboration |
-| **Sequential Tasks** | Task tool with ordered execution | One-off tasks, no inter-agent communication needed |
+| Modo | Descripción | Recomendado Para |
+|------|-------------|------------------|
+| **Tareas en Paralelo** (por defecto) | Task tool con `run_in_background: true` | 2+ agentes que requieren colaboración |
+| **Tareas Secuenciales** | Task tool con ejecución ordenada | Tareas únicas, sin comunicación entre agentes |
 
 <p align="center">
-  <img src="harness_team.png" alt="Harness Agent Team" width="500">
+  <img src="harness_team.png" alt="Equipo de Agentes Harness" width="500">
 </p>
 
-### Architecture Patterns
+### Patrones Arquitectónicos
 
-| Pattern | Description |
-|---------|-------------|
-| Pipeline | Sequential dependent tasks |
-| Fan-out/Fan-in | Parallel independent tasks |
-| Expert Pool | Context-dependent selective invocation |
-| Producer-Reviewer | Generation followed by quality review |
-| Supervisor | Central agent with dynamic task distribution |
-| Hierarchical Delegation | Top-down recursive delegation |
+| Patrón | Descripción |
+|--------|-------------|
+| Pipeline | Tareas secuenciales dependientes |
+| Fan-out/Fan-in | Tareas paralelas independientes |
+| Expert Pool | Invocación selectiva según contexto |
+| Productor-Revisor | Generación seguida de revisión de calidad |
+| Supervisor | Agente central con distribución dinámica de tareas |
+| Delegación Jerárquica | Delegación recursiva de arriba a abajo |
 
-## Output
+## Salida
 
-Files generated by Harness:
+Archivos generados por Harness:
 
 ```
-your-project/
+tu-proyecto/
 ├── .opencode/
-│   ├── agents/          # Agent definition files
+│   ├── agents/          # Archivos de definición de agentes
 │   │   ├── analyst.md
 │   │   ├── builder.md
 │   │   └── qa.md
-│   └── skills/          # Skill files
+│   └── skills/          # Archivos de skills
 │       ├── analyze/
-│       │   └── skill.md
+│       │   ├── skill.md
+│       │   └── references/
 │       └── build/
 │           ├── skill.md
 │           └── references/
 ```
 
-## Use Cases — Try These Prompts
+## Casos de Uso — Probá Estos Prompts
 
-Copy any prompt below into OpenCode after installing Harness:
+Copiá cualquier prompt en OpenCode después de instalar Harness:
 
-**Deep Research**
+**Investigación Profunda**
 ```
-Build a harness for deep research. I need an agent team that can investigate
-any topic from multiple angles — web search, academic sources, community
-sentiment — then cross-validate findings and produce a comprehensive report.
-```
-
-**Website Development**
-```
-Build a harness for full-stack website development. The team should handle
-design, frontend (React/Next.js), backend (API), and QA testing in a
-coordinated pipeline from wireframe to deployment.
+Construí un harness para investigación profunda. Necesito un equipo de agentes
+capaz de investigar cualquier tema desde múltiples ángulos — búsqueda web,
+fuentes académicas, opinión de la comunidad — para luego validar hallazgos
+y producir un informe completo.
 ```
 
-**Webtoon / Comic Production**
+**Desarrollo de Sitios Web**
 ```
-Build a harness for webtoon episode production. I need agents for story
-writing, character design prompts, panel layout planning, and dialogue
-editing. They should review each other's work for style consistency.
-```
-
-**YouTube Content Planning**
-```
-Build a harness for YouTube content creation. The team should research
-trending topics, write scripts, optimize titles/tags for SEO, and plan
-thumbnail concepts — all coordinated by a supervisor agent.
+Construí un harness para desarrollo full-stack de sitios web. El equipo debe
+manejar diseño, frontend (React/Next.js), backend (API) y QA en un pipeline
+coordinado desde el wireframe hasta el despliegue.
 ```
 
-**Code Review & Refactoring**
+**Producción de Webtoons / Cómics**
 ```
-Build a harness for comprehensive code review. I want parallel agents
-checking architecture, security vulnerabilities, performance bottlenecks,
-and code style — then merging all findings into a single report.
-```
-
-**Technical Documentation**
-```
-Build a harness that generates API documentation from this codebase.
-Agents should analyze endpoints, write descriptions, generate usage
-examples, and review for completeness.
+Construí un harness para producción de episodios de webtoon. Necesito agentes
+para guion, diseño de personajes, planificación de viñetas y edición de
+diálogos. Deben revisar el trabajo de los demás para mantener consistencia
+de estilo.
 ```
 
-**Data Pipeline Design**
+**Planificación de Contenido para YouTube**
 ```
-Build a harness for designing data pipelines. I need agents for schema
-design, ETL logic, data validation rules, and monitoring setup that
-delegate sub-tasks hierarchically.
-```
-
-**Marketing Campaign**
-```
-Build a harness for marketing campaign creation. The team should research
-the target market, write ad copy, design visual concepts, and set up
-A/B test plans with iterative quality review.
+Construí un harness para creación de contenido en YouTube. El equipo debe
+investigar tendencias, escribir guiones, optimizar títulos/etiquetas para SEO
+y planificar conceptos de miniaturas — todo coordinado por un agente supervisor.
 ```
 
-## Built with Harness
+**Revisión y Refactorización de Código**
+```
+Construí un harness para revisión integral de código. Quiero agentes en
+paralelo revisando arquitectura, vulnerabilidades de seguridad, cuellos de
+botella de rendimiento y estilo de código — para luego fusionar todo en un
+solo informe.
+```
+
+**Documentación Técnica**
+```
+Construí un harness que genere documentación de API a partir de este código.
+Los agentes deben analizar endpoints, escribir descripciones, generar ejemplos
+de uso y revisar que esté completa.
+```
+
+**Diseño de Pipelines de Datos**
+```
+Construí un harness para diseñar pipelines de datos. Necesito agentes para
+diseño de esquemas, lógica ETL, reglas de validación y configuración de
+monitoreo que deleguen subtareas jerárquicamente.
+```
+
+**Campaña de Marketing**
+```
+Construí un harness para creación de campañas de marketing. El equipo debe
+investigar el mercado objetivo, redactar copys publicitarios, diseñar conceptos
+visuales y definir planes de tests A/B con revisión iterativa de calidad.
+```
+
+## Construido con Harness
 
 ### Harness 100
 
-**[revfactory/harness-100](https://github.com/revfactory/harness-100)** — 100 production-ready agent team harnesses across 10 domains, available in both English and Korean (200 packages total). Each harness ships with 4-5 specialist agents, an orchestrator skill, and domain-specific skills — all generated by this plugin. 1,808 markdown files covering content creation, software development, data/AI, business strategy, education, legal, health, and more.
+**[revfactory/harness-100](https://github.com/revfactory/harness-100)** — 100 harnesses de equipos de agentes listos para producción en 10 dominios, disponibles en inglés y coreano (200 paquetes en total). Cada harness incluye 4-5 agentes especializados, una skill de orquestación y skills específicas del dominio — todo generado por este plugin. 1.808 archivos markdown que cubren creación de contenido, desarrollo de software, datos/IA, estrategia de negocio, educación, legal, salud y más.
 
-### Research: A/B Testing Harness Effectiveness
+### Investigación: Test A/B de Efectividad de Harness
 
-**[revfactory/claude-code-harness](https://github.com/revfactory/claude-code-harness)** — A controlled experiment across 15 software engineering tasks measuring the impact of structured pre-configuration on LLM code agent output quality.
+**[revfactory/claude-code-harness](https://github.com/revfactory/claude-code-harness)** — Un experimento controlado en 15 tareas de ingeniería de software que mide el impacto de la preconfiguración estructurada en la calidad de la salida de agentes LLM.
 
-| Metric | Without Harness | With Harness | Improvement |
-|--------|:-:|:-:|:-:|
-| Average Quality Score | 49.5 | 79.3 | **+60%** |
-| Win Rate | — | — | **100%** (15/15) |
-| Output Variance | — | — | **-32%** |
+| Métrica | Sin Harness | Con Harness | Mejora |
+|---------|:-:|:-:|:-:|
+| Puntaje de Calidad Promedio | 49.5 | 79.3 | **+60%** |
+| Tasa de Éxito | — | — | **100%** (15/15) |
+| Varianza de Salida | — | — | **-32%** |
 
-Key finding: effectiveness scales with task complexity — the harder the task, the greater the improvement (+23.8 Basic, +29.6 Advanced, +36.2 Expert).
+Hallazgo clave: la efectividad escala con la complejidad de la tarea — cuanto más difícil, mayor la mejora (+23.8 Básico, +29.6 Avanzado, +36.2 Experto).
 
-> Full paper: *Hwang, M. (2026). Harness: Structured Pre-Configuration for Enhancing LLM Code Agent Output Quality.*
+> Artículo completo: *Hwang, M. (2026). Harness: Structured Pre-Configuration for Enhancing LLM Code Agent Output Quality.*
 
-## Requirements
+## Requisitos
 
-- OpenCode with skills support enabled
+- OpenCode con soporte de skills habilitado
 
-## License
+## Licencia
 
 Apache 2.0
