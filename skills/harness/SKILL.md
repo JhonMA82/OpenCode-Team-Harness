@@ -10,7 +10,6 @@ description: "하네스를 구성합니다. 전문 에이전트를 정의하며,
 **핵심 원칙:**
 1. 에이전트 정의(.opencode/agents/)와 스킬(.opencode/skills/)을 생성한다.
 2. **Task tool을 사용한 병렬/순차 호출을 기본 실행 모드로 사용한다.**
-3. Claude 호환 경로(.claude/, ~/.claude/)도 지원한다.
 
 ## 워크플로우
 

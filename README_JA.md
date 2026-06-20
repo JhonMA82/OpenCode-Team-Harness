@@ -7,7 +7,7 @@
   <img src="https://img.shields.io/badge/Changed-Agent_Team→Parallel_Tasks-red.svg" alt="Architecture Change">
 </p>
 
-> ⚠️ **Opencodeポーティング**: このリポジトリは[revfactory/harness](https://github.com/revfactory/harness)のOpencodeポーティングバージョンです。
+> ⚠️ **Opencodeポーティング**: このリポジトリは[revfactory/harness](https://github.com/JhonMA82/OpenCode-Team-Harness)のOpencodeポーティングバージョンです。
 > - **アーキテクチャ**: Agent Teams → Parallel Tasks
 > - **互換性**: Opencode専用（Claude Code非対応）
 > - 変更点は[CHANGES.md](CHANGES.md)をご覧ください。
@@ -18,7 +18,7 @@
   <img src="https://img.shields.io/badge/Opencode-Skill-blue.svg" alt="Opencode Skill">
   <img src="https://img.shields.io/badge/Patterns-6_Architectures-orange.svg" alt="6 Architecture Patterns">
   <img src="https://img.shields.io/badge/Mode-Parallel_Tasks-orange.svg" alt="Parallel Tasks">
-  <a href="https://github.com/revfactory/harness/stargazers"><img src="https://img.shields.io/github/stars/revfactory/harness?style=social" alt="GitHub Stars"></a>
+  <a href="https://github.com/JhonMA82/OpenCode-Team-Harness/stargazers"><img src="https://img.shields.io/github/stars/revfactory/harness?style=social" alt="GitHub Stars"></a>
 </p>
 
 # Harness
@@ -31,7 +31,7 @@
 
 ## 概要
 
-Harnessは、Claude Codeのエージェントチームシステムを活用し、複雑なタスクを専門エージェントチームに分解・統制するアーキテクチャツールです。「ハーネスを構成して」と伝えるだけで、ドメインに適したエージェント定義（`.claude/agents/`）とスキル（`.claude/skills/`）を自動生成します。
+Harnessは、OpenCodeの並列タスクシステムを活用し、複雑なタスクを専門エージェントチームに分解・統制するアーキテクチャツールです。「ハーネスを構成して」と伝えるだけで、ドメインに適したエージェント定義（`.opencode/agents/`）とスキル（`.opencode/skills/`）を自動生成します。
 
 ## 主な機能
 
@@ -47,9 +47,9 @@ Phase 1: ドメイン分析
     ↓
 Phase 2: チームアーキテクチャ設計（Agent Teams vs サブエージェント）
     ↓
-Phase 3: エージェント定義の生成（.claude/agents/）
+Phase 3: エージェント定義の生成（.opencode/agents/）
     ↓
-Phase 4: スキル生成（.claude/skills/）
+Phase 4: スキル生成（.opencode/skills/）
     ↓
 Phase 5: 統合とオーケストレーション
     ↓
@@ -58,31 +58,17 @@ Phase 6: 検証とテスト
 
 ## インストール
 
-### マーケットプレイス経由
-
-#### マーケットプレイスの追加
-```shell
-/plugin marketplace add revfactory/harness
-```
-
-#### プラグインのインストール
-```shell
-/plugin install harness@harness
-```
-
 ### グローバルスキルとして直接インストール
 
 ```shell
-# skillsディレクトリを ~/.claude/skills/harness/ にコピー
-cp -r skills/harness ~/.claude/skills/harness
+# skillsディレクトリを ~/.config/opencode/skills/ にコピー
+cp -r skills/harness ~/.config/opencode/skills/harness
 ```
 
 ## プラグイン構成
 
 ```
 harness/
-├── .claude-plugin/
-│   └── plugin.json                 # プラグインマニフェスト
 ├── skills/
 │   └── harness/
 │       ├── SKILL.md                # メインスキル定義（6フェーズワークフロー）
@@ -98,7 +84,7 @@ harness/
 
 ## 使い方
 
-Claude Codeで以下のように呼び出します：
+OpenCodeで以下のように呼び出します：
 
 ```
 Build a harness for this project
@@ -110,8 +96,8 @@ Set up a harness
 
 | モード | 説明 | 推奨ケース |
 |--------|------|------------|
-| **Agent Teams**（デフォルト） | TeamCreate + SendMessage + TaskCreate | エージェント2名以上、コラボレーションが必要な場合 |
-| **サブエージェント** | Agentツール直接呼び出し | 単発タスク、エージェント間通信不要の場合 |
+| **並列タスク**（デフォルト） | Task tool with `run_in_background: true` | エージェント2名以上、コラボレーションが必要な場合 |
+| **順次タスク** | Task tool with ordered execution | 単発タスク、エージェント間通信不要の場合 |
 
 <p align="center">
   <img src="harness_team.png" alt="Harness Agent Team" width="500">
@@ -134,7 +120,7 @@ Harnessが生成するファイル：
 
 ```
 your-project/
-├── .claude/
+├── .opencode/
 │   ├── agents/          # エージェント定義ファイル
 │   │   ├── analyst.md
 │   │   ├── builder.md
@@ -149,7 +135,7 @@ your-project/
 
 ## ユースケース — そのまま使えるプロンプト
 
-Harnessインストール後、以下のプロンプトをClaude Codeにコピーしてお使いください：
+Harnessインストール後、以下のプロンプトをOpenCodeにコピーしてお使いください：
 
 **ディープリサーチ**
 ```
@@ -229,7 +215,7 @@ A/B test plans with iterative quality review.
 
 ## 要件
 
-- [Agent Teams機能の有効化](https://code.claude.com/docs/en/agent-teams)：`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`
+- OpenCode with skills support enabled
 
 ## ライセンス
 
