@@ -1,0 +1,46 @@
+# openspec/config.yaml
+schema: spec-driven
+
+context: |
+  Project: opencode-team-harness (fork of revfactory/harness)
+  Type: Opencode plugin — meta-skill for agent team design & skill generation
+  Stack: Static HTML/CSS/JS (vanilla, no build system, no package manager)
+  Architecture: Single-page landing with i18n (EN/KO/JA), plugin marketplace config
+  Testing: No test runner or CI pipeline configured
+  Style: Simple, no framework, no preprocessing
+
+rules:
+  proposal:
+    - Include rollback plan for risky changes
+  specs:
+    - Use Given/When/Then for scenarios
+    - Use RFC 2119 keywords (MUST, SHALL, SHOULD, MAY)
+  design:
+    - Include sequence diagrams for complex flows
+    - Document architecture decisions with rationale
+  tasks:
+    - Group by phase, use hierarchical numbering
+    - Keep tasks completable in one session
+  apply:
+    - Follow existing code patterns
+    tdd: false
+    test_command: ""
+  verify:
+    test_command: ""
+    build_command: ""
+    coverage_threshold: 0
+  archive:
+    - Warn before merging destructive deltas
+
+testing:
+  strict_tdd: false
+  runner: none
+  layers:
+    unit: false
+    integration: false
+    e2e: false
+  coverage: false
+  linter: none
+  type_checker: none
+  formatter: none
+  notes: No test infrastructure exists. No CI pipeline. Static site only.
