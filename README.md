@@ -27,26 +27,28 @@
 
 **Arquitecto de Equipos y Skills** — Skill de OpenCode
 
-Un meta-skill que diseña equipos de agentes especializados por dominio, define agentes y genera las
-skills que utilizan.
+Un meta-skill que diseña equipos de agentes especializados por dominio, define
+agentes y genera las skills que utilizan.
 
 ## Visión General
 
 Harness aprovecha el sistema de tareas en paralelo de OpenCode para descomponer
-tareas complejas en equipos coordinados de agentes especializados. Con solo decir
-"construí un harness para este proyecto", genera automáticamente definiciones de
-agentes (`.opencode/agents/`) y skills (`.opencode/skills/`) adaptadas a tu
-dominio.
+tareas complejas en equipos coordinados de agentes especializados. Con solo
+decir "construí un harness para este proyecto", genera automáticamente
+definiciones de agentes (`.opencode/agents/`) y skills
+(`.opencode/skills/`) adaptadas a tu dominio.
 
 ## Características Principales
 
 - **Diseño de Equipos** — 6 patrones arquitectónicos: canalización,
-  distribución/reunificación, grupo de expertos, productor-revisor, supervisor y
-  delegación jerárquica
+  distribución/reunificación, grupo de expertos, productor-revisor, supervisor
+  y delegación jerárquica
 - **Generación de Skills** — Genera skills automáticas con Divulgación
   Progresiva para una gestión eficiente del contexto
-- **Orquestación** — Paso de datos entre agentes, manejo de errores y protocolos de coordinación
-- **Validación** — Verificación de disparadores, pruebas en seco y tests comparativos con/sin skill
+- **Orquestación** — Paso de datos entre agentes, manejo de errores y
+  protocolos de coordinación
+- **Validación** — Verificación de disparadores, pruebas en seco y tests
+  comparativos con/sin skill
 
 ## Flujo de Trabajo
 
@@ -68,9 +70,9 @@ Fase 6: Validación y Pruebas
 
 ### Instalación local por proyecto
 
-Instalá Harness dentro del proyecto donde querés usarlo. Esta es la
-instalación recomendada porque mantiene la configuración versionada con el
-repositorio y evita modificar la configuración global de OpenCode.
+Instalá Harness dentro del proyecto donde querés usarlo. Esta es la instalación
+recomendada porque mantiene la configuración versionada con el repositorio y
+evita modificar la configuración global de OpenCode.
 
 ```shell
 # Desde el proyecto consumidor
@@ -181,8 +183,9 @@ de estilo.
 
 ```
 Construí un harness para creación de contenido en YouTube. El equipo debe
-investigar tendencias, escribir guiones, optimizar títulos/etiquetas para buscadores
-y planificar conceptos de miniaturas — todo coordinado por un agente supervisor.
+investigar tendencias, escribir guiones, optimizar títulos/etiquetas para
+buscadores y planificar conceptos de miniaturas — todo coordinado por un agente
+supervisor.
 ```
 
 **Revisión y Refactorización de Código**
@@ -246,8 +249,8 @@ agentes LLM.
 Hallazgo clave: la efectividad escala con la complejidad de la tarea — cuanto
 más difícil, mayor la mejora (+23.8 Básico, +29.6 Avanzado, +36.2 Experto).
 
-> Artículo completo: *Hwang, M. (2026). Harness: Structured Pre-Configuration for Enhancing LLM Code
-> Agent Output Quality.*
+> Artículo completo: *Hwang, M. (2026). Harness: Structured Pre-Configuration
+> for Enhancing LLM Code Agent Output Quality.*
 
 ## Requisitos
 

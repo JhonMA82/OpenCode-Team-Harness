@@ -1,17 +1,21 @@
 <!--
-  This repo IS the harness meta-skill — it generates agent teams for consumer projects.
+  This repo IS the harness meta-skill — it generates agent teams
+  for consumer projects.
   See skills/harness/SKILL.md for the entry point.
-  The templates at skills/harness/templates/ produce AGENTS.md files for NEW projects.
+  The templates at skills/harness/templates/ produce AGENTS.md files
+  for NEW projects.
 -->
+
 # OpenCode Team Harness
 
-OpenCode Team Harness is a meta-skill for generating structured OpenCode agent teams in consumer
-projects.
+OpenCode Team Harness is a meta-skill for generating structured OpenCode
+agent teams in consumer projects.
 
 ## Purpose
 
-The harness acts as the orchestrator for a generated team. It analyzes the target project, chooses
-an agent-team shape, and writes deterministic OpenCode artifacts.
+The harness acts as the orchestrator for a generated team. It analyzes
+the target project, chooses an agent-team shape, and writes deterministic
+OpenCode artifacts.
 
 ## Generated outputs
 
@@ -33,9 +37,11 @@ an agent-team shape, and writes deterministic OpenCode artifacts.
 
 ## Usage
 
-Invoke Harness from a consumer project. The meta-skill prompts for project context, fills templates,
-and writes generated artifacts into that consumer project's directory.
+Invoke Harness from a consumer project. The meta-skill prompts for project
+context, fills templates, and writes generated artifacts into that consumer
+project's directory.
 
 ## References
 
-See `docs/agentic-development/team-architecture.md` for architecture rationale.
+See `docs/agentic-development/team-architecture.md` for architecture
+rationale.

@@ -6,14 +6,16 @@ prompts: []
 providers: []
 
 tests:
-  # Runtime model: generated artifacts should not recommend AI services at runtime.
+  # Runtime model: generated artifacts should not recommend AI services at
+  # runtime.
   - description: "Generated artifacts do not recommend AI at runtime"
     assert:
       - type: contains
         value: "No runtime dependencies"
         file: "../../docs/compatibility/opencode.md"
       - type: contains
-        value: "no external service, daemon, or runtime AI dependency is required"
+        value: "no external service, daemon, or runtime AI dependency is
+          required"
         file: "../../docs/compatibility/opencode.md"
 
   # Installation guidance: local per-project install is recommended.
@@ -23,7 +25,8 @@ tests:
         value: "Instalación local por proyecto"
         file: "../../README.md"
 
-  - description: "OpenCode compatibility does not recommend global install by default"
+  - description: "OpenCode compatibility does not recommend global install by
+    default"
     assert:
       - type: contains
         value: "Local per-project installation is recommended"
@@ -35,7 +38,8 @@ tests:
         value: "Esta es la instalación recomendada"
         file: "../../README.md"
       - type: contains
-        value: "cp -r /ruta/a/OpenCode-Team-Harness/skills/harness .opencode/skills/harness"
+        value: "cp -r /ruta/a/OpenCode-Team-Harness/skills/harness
+          .opencode/skills/harness"
         file: "../../README.md"
 
   # Runtime model: no external AI service is required by generated artifacts.
@@ -80,7 +84,8 @@ tests:
         value: "Optional portable skill mirror"
         file: "../../AGENTS.md"
       - type: contains
-        value: "Optionally mirror portable skills under `.agents/skills/{{SKILL_NAME}}/SKILL.md`"
+        value: "Optionally mirror portable skills under
+          `.agents/skills/{{SKILL_NAME}}/SKILL.md`"
         file: "../../skills/harness/templates/AGENTS.md"
       - type: contains
         value: "Pure OpenCode projects do not need `.agents/skills/`"
@@ -99,7 +104,8 @@ tests:
         value: "NOT a runtime dependency"
         file: "../../examples/mezaos/README.md"
       - type: contains
-        value: "what `skills/harness/` generates when invoked for a MezaOS project"
+        value: "what `skills/harness/` generates when invoked for a MezaOS
+          project"
         file: "../../examples/mezaos/README.md"
       - type: not-contains
         value: "MezaOS is required"
@@ -120,6 +126,7 @@ tests:
       - type: not-contains
         value: "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS"
         file: "../../README.md"
+
   - description: "No legacy Claude Code plugin remnants in README_KO.md"
     assert:
       - type: not-contains
@@ -134,6 +141,7 @@ tests:
       - type: not-contains
         value: "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS"
         file: "../../README_KO.md"
+
   - description: "No legacy Claude Code plugin remnants in README_JA.md"
     assert:
       - type: not-contains
@@ -148,6 +156,7 @@ tests:
       - type: not-contains
         value: "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS"
         file: "../../README_JA.md"
+
   - description: "No legacy Claude Code plugin remnants in index.html"
     assert:
       - type: not-contains
@@ -162,6 +171,7 @@ tests:
       - type: not-contains
         value: "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS"
         file: "../../index.html"
+
   - description: "No legacy Claude Code plugin remnants in privacy.html"
     assert:
       - type: not-contains
@@ -176,6 +186,7 @@ tests:
       - type: not-contains
         value: "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS"
         file: "../../privacy.html"
+
   - description: "No .claude-plugin directory"
     assert:
       - type: not-exists
@@ -186,18 +197,22 @@ tests:
     assert:
       - type: file-exists
         value: "../../AGENTS.md"
+
   - description: "Architecture doc exists"
     assert:
       - type: file-exists
         value: "../../docs/agentic-development/team-architecture.md"
+
   - description: "Eval strategy exists"
     assert:
       - type: file-exists
         value: "../../docs/agentic-development/eval-strategy.md"
+
   - description: "OpenCode compat doc exists"
     assert:
       - type: file-exists
         value: "../../docs/compatibility/opencode.md"
+
   - description: "Portable agents doc exists"
     assert:
       - type: file-exists
@@ -208,10 +223,12 @@ tests:
     assert:
       - type: file-exists
         value: "../../skills/harness/templates/AGENTS.md"
+
   - description: "Agent template exists"
     assert:
       - type: file-exists
         value: "../../skills/harness/templates/agent.md"
+
   - description: "Skill template exists"
     assert:
       - type: file-exists
@@ -222,14 +239,17 @@ tests:
     assert:
       - type: file-exists
         value: "../../examples/mezaos/README.md"
+
   - description: "MezaOS image build agent exists"
     assert:
       - type: file-exists
         value: "../../examples/mezaos/image-build/agent.md"
+
   - description: "MezaOS CLI/TUI agent exists"
     assert:
       - type: file-exists
         value: "../../examples/mezaos/cli-tui/agent.md"
+
   - description: "MezaOS validation agent exists"
     assert:
       - type: file-exists
@@ -241,11 +261,13 @@ tests:
       - type: contains
         value: "{{TEAM_NAME}}"
         file: "../../skills/harness/templates/AGENTS.md"
+
   - description: "Agent template has placeholders"
     assert:
       - type: contains
         value: "{{AGENT_NAME}}"
         file: "../../skills/harness/templates/agent.md"
+
   - description: "Skill template has frontmatter"
     assert:
       - type: contains
