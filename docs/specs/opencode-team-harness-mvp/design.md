@@ -33,7 +33,7 @@ Two-phase implementation: (1) strip all Claude Code identity from the fork's pub
 | `.opencode/skills/` only | Clean but breaks `.agents/`-compatible consumers | **REJECTED** |
 | Both paths, `.opencode/` primary | Supports migration without lock-in | **SELECTED** |
 
-**Rationale**: Per SG-3 (SHOULD) and IR-8 (MUST NOT remove primary). The generation logic always writes to `.opencode/skills/<name>/SKILL.md`. If portable compat is enabled, a deterministic mirror/copy step writes to `.agents/skills/<name>/SKILL.md`. The primary is always authoritative — `.agents/skills/` is a derived artifact.
+**Rationale**: Per SG-3 (SHOULD) and IR-8 (MUST NOT remove primary). The generation logic always writes to `.opencode/skills/{{SKILL_NAME}}/SKILL.md`. If portable compat is enabled, a deterministic mirror/copy step writes to `.agents/skills/{{SKILL_NAME}}/SKILL.md`. The primary is always authoritative — `.agents/skills/` is a derived artifact.
 
 ### Decision: SKILL.md Claude compat line
 
@@ -63,11 +63,11 @@ skills/harness/SKILL.md (meta-skill activated)
     ├── Phase 1-2: Analyze domain, choose architecture pattern
     │
     ├── Phase 3: Generate agent definitions
-    │   └── templates/ → AGENTS.md + .opencode/agents/<name>.md
+    │   └── templates/ → AGENTS.md + .opencode/agents/{{AGENT_NAME}}.md
     │
     ├── Phase 4: Generate skills
-    │   └── templates/ → .opencode/skills/<name>/SKILL.md
-    │                  → (if compat) .agents/skills/<name>/SKILL.md
+    │   └── templates/ → .opencode/skills/{{SKILL_NAME}}/SKILL.md
+    │                  → (if compat) .agents/skills/{{SKILL_NAME}}/SKILL.md
     │
     └── Phase 5-6: Wire orchestration + validate
 ```
@@ -131,7 +131,7 @@ opencode-team-harness/
 | 2 | 34 | Claude Code's agent team system | OpenCode's parallel task system |
 | 3 | 50 | `.claude/agents/` | `.opencode/agents/` |
 | 4 | 52 | `.claude/skills/` | `.opencode/skills/` |
-| 5 | 76-77 | `~/.claude/skills/harness/` | `~/.config/opencode/skills/` |
+| 5 | 76-77 | `~/.claude/skills/harness/` | `.opencode/skills/harness/` in the consumer project |
 | 6 | 101 | Trigger in Claude Code | Trigger in OpenCode |
 | 7 | 137-148 | `.claude/` directory tree | `.opencode/` directory tree |
 | 8 | 152 | Copy into Claude Code | Copy into OpenCode |

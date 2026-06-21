@@ -156,7 +156,7 @@ Task tool의 name 파라미터로 에이전트 타입을 지정한다.
 
 ### 커스텀 타입
 
-.opencode/agents/{name}.md에 에이전트를 정의하면 name: "{name}"으로 호출할 수 있다. 커스텀 에이전트는 전체 도구에 접근 가능.
+`.opencode/agents/{{AGENT_NAME}}.md`에 에이전트를 정의하면 name: "{{AGENT_NAME}}"으로 호출할 수 있다. 커스텀 에이전트는 전체 도구에 접근 가능.
 
 ### 선택 기준
 
@@ -168,13 +168,13 @@ Task tool의 name 파라미터로 에이전트 타입을 지정한다.
 | 설계/계획만 필요 | **Plan** | 분석에 집중, 코드 변경 방지 |
 | 파일 수정이 필요한 구현 작업 | **커스텀 타입** | 전체 도구 접근 + 전문 지시 |
 
-**원칙:** 모든 에이전트는 반드시 .opencode/agents/{name}.md 파일로 정의한다. 빌트인 타입이라도 에이전트 정의 파일을 생성하여 역할·원칙을 명시한다. 파일로 존재해야 다음 세션에서 재사용 가능하다.
+**원칙:** 모든 에이전트는 반드시 `.opencode/agents/{{AGENT_NAME}}.md` 파일로 정의한다. 빌트인 타입이라도 에이전트 정의 파일을 생성하여 역할·원칙을 명시한다. 파일로 존재해야 다음 세션에서 재사용 가능하다.
 
 **모델 설정:** `model` 파라미터는 `provider/model` 형식으로 지정합니다. 사용자의 OpenCode 설정(config)에서 구성된 모델을 사용합니다. 예: `anthropic/claude-sonnet-4-20250514`, `openrouter/minimax/minimax-m2.7` 등
 
 ## 에이전트 정의: Markdown vs JSON
 
-### Markdown (.opencode/agents/{name}.md)
+### Markdown (`.opencode/agents/{{AGENT_NAME}}.md`)
 
 markdown
 ---

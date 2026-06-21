@@ -19,7 +19,7 @@ OpenCode reads agent definitions from `AGENTS.md` at the project root and indivi
 
 ### 2. Skills
 
-OpenCode loads skills from `.opencode/skills/<name>/SKILL.md`. The harness generates these with proper frontmatter that OpenCode can parse.
+OpenCode loads project skills from `.opencode/skills/{{SKILL_NAME}}/SKILL.md`. The harness generates these with proper frontmatter that OpenCode can parse.
 
 ### 3. Tool Access
 
@@ -29,7 +29,7 @@ Generated agents use only OpenCode's built-in tools — `task`, `read`, `write`,
 
 If you are migrating from a Claude Code project:
 
-1. Copy `skills/harness/` to `~/.config/opencode/skills/`
+1. Copy `skills/harness/` to `.opencode/skills/harness/` inside the consumer project
 2. Install OpenCode (see [OpenCode docs](https://github.com/JhonMA82/OpenCode-Team-Harness))
 3. Invoke the harness skill from within your consumer project
 4. Generated output goes to `.opencode/`, keeping your existing `.claude/` config untouched

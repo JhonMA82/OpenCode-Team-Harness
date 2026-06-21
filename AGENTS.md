@@ -5,25 +5,26 @@
 -->
 # OpenCode Team Harness
 
-**Orchestrator Agent**: Generate structured agent teams for OpenCode projects.
+**Orchestrator agent**: Generates structured agent teams for OpenCode projects.
 
-This repository contains the meta-skill (`skills/harness/SKILL.md`) that, when invoked, generates:
+This repository contains the meta-skill at `skills/harness/SKILL.md`. When invoked from a consumer project, it generates:
 
-- `AGENTS.md` — team entry point with role definitions
-- `.opencode/agents/*.md` — individual agent specs
-- `.opencode/skills/*/SKILL.md` — domain skills per agent
+- `AGENTS.md` — team entry point with role definitions.
+- `.opencode/agents/{{AGENT_NAME}}.md` — individual agent specs.
+- `.opencode/skills/{{SKILL_NAME}}/SKILL.md` — domain skills per agent.
+- `.agents/skills/{{SKILL_NAME}}/SKILL.md` — optional portable skill mirror.
 
-## Agent Roles (generated)
+## Generated agent roles
 
-| Agent | Role | Trigger |
-|-------|------|---------|
-| Domain Analyzer | Analyze project context and choose architecture | User invokes harness |
-| Agent Writer | Generate agent definitions from templates | Domain analysis done |
-| Skill Writer | Generate skill definitions from templates | Agent definitions done |
-| Validator | Validate generated output against spec | All generation done |
+| Agent | Role | Trigger guidance |
+|---|---|---|
+| Domain Analyzer | Analyze project context and choose architecture. | User invokes Harness for a project/domain. |
+| Agent Writer | Generate agent definitions from templates. | Domain analysis is complete. |
+| Skill Writer | Generate skill definitions from templates. | Agent definitions are complete. |
+| Validator | Validate generated output against spec. | All generation tasks are complete. |
 
 ## Usage
 
-Invoke the harness from a consumer project. The meta-skill will prompt for project context, fill templates, and write generated artifacts into the consumer's project directory.
+Invoke Harness from a consumer project. The meta-skill prompts for project context, fills templates, and writes generated artifacts into that consumer project's directory.
 
 See `docs/agentic-development/team-architecture.md` for architecture rationale.

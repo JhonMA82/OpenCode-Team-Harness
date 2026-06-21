@@ -36,7 +36,7 @@ None.
 
 ## Approach
 
-**Phase 1 — Identity Refactor**: Scrub Claude Code from READMEs, index.html, privacy.html, plugin.json. Update install paths to `~/.config/opencode/skills/`. Remove `.claude-plugin/`. Update GitHub links. Core skill logic already adapted — leave it.
+**Phase 1 — Identity Refactor**: Scrub Claude Code from READMEs, index.html, privacy.html, plugin.json. Update recommended install paths to local per-project `.opencode/skills/`. Remove `.claude-plugin/`. Update GitHub links. Core skill logic already adapted — leave it.
 
 **Phase 2 — OpenCode Generation**: AGENTS.md. Update harness to emit `.opencode/` paths. Add `.agents/skills/` compat. Add evals. Add MezaOS reference.
 

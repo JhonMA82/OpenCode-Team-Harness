@@ -6,38 +6,83 @@ prompts: []
 providers: []
 
 tests:
-  # ── Identity Refactor: no Claude Code references (EI-3) ──
-  - description: "No Claude Code in README.md"
+  # Identity Refactor: no legacy Claude Code plugin remnants (EI-3)
+  - description: "No legacy Claude Code plugin remnants in README.md"
     assert:
       - type: not-contains
-        value: "Claude Code"
+        value: "Claude Code plugin"
         file: "../../README.md"
-  - description: "No Claude Code in README_KO.md"
+      - type: not-contains
+        value: "for Claude Code"
+        file: "../../README.md"
+      - type: not-contains
+        value: "~/.claude/"
+        file: "../../README.md"
+      - type: not-contains
+        value: "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS"
+        file: "../../README.md"
+  - description: "No legacy Claude Code plugin remnants in README_KO.md"
     assert:
       - type: not-contains
-        value: "Claude Code"
+        value: "Claude Code plugin"
         file: "../../README_KO.md"
-  - description: "No Claude Code in README_JA.md"
+      - type: not-contains
+        value: "for Claude Code"
+        file: "../../README_KO.md"
+      - type: not-contains
+        value: "~/.claude/"
+        file: "../../README_KO.md"
+      - type: not-contains
+        value: "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS"
+        file: "../../README_KO.md"
+  - description: "No legacy Claude Code plugin remnants in README_JA.md"
     assert:
       - type: not-contains
-        value: "Claude Code"
+        value: "Claude Code plugin"
         file: "../../README_JA.md"
-  - description: "No Claude in index.html"
+      - type: not-contains
+        value: "for Claude Code"
+        file: "../../README_JA.md"
+      - type: not-contains
+        value: "~/.claude/"
+        file: "../../README_JA.md"
+      - type: not-contains
+        value: "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS"
+        file: "../../README_JA.md"
+  - description: "No legacy Claude Code plugin remnants in index.html"
     assert:
       - type: not-contains
-        value: "Claude"
+        value: "Claude Code plugin"
         file: "../../index.html"
-  - description: "No Claude in privacy.html"
+      - type: not-contains
+        value: "for Claude Code"
+        file: "../../index.html"
+      - type: not-contains
+        value: "~/.claude/"
+        file: "../../index.html"
+      - type: not-contains
+        value: "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS"
+        file: "../../index.html"
+  - description: "No legacy Claude Code plugin remnants in privacy.html"
     assert:
       - type: not-contains
-        value: "Claude"
+        value: "Claude Code plugin"
+        file: "../../privacy.html"
+      - type: not-contains
+        value: "for Claude Code"
+        file: "../../privacy.html"
+      - type: not-contains
+        value: "~/.claude/"
+        file: "../../privacy.html"
+      - type: not-contains
+        value: "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS"
         file: "../../privacy.html"
   - description: "No .claude-plugin directory"
     assert:
       - type: not-exists
         value: "../../.claude-plugin"
 
-  # ── Generated structure: file existence (EI-2) ──
+  # Generated structure: file existence (EI-2)
   - description: "AGENTS.md exists at root"
     assert:
       - type: file-exists
@@ -59,7 +104,7 @@ tests:
       - type: file-exists
         value: "../../docs/compatibility/portable-agents.md"
 
-  # ── Templates exist ──
+  # Templates exist
   - description: "AGENTS.md template exists"
     assert:
       - type: file-exists
@@ -73,25 +118,25 @@ tests:
       - type: file-exists
         value: "../../skills/harness/templates/skill.md"
 
-  # ── MezaOS example exists (reference only) ──
+  # MezaOS example exists (reference only)
   - description: "MezaOS example exists"
     assert:
       - type: file-exists
         value: "../../examples/mezaos/README.md"
-  - description: "MezaOS kernel agent exists"
+  - description: "MezaOS image build agent exists"
     assert:
       - type: file-exists
-        value: "../../examples/mezaos/kernel/agent.md"
-  - description: "MezaOS drivers agent exists"
+        value: "../../examples/mezaos/image-build/agent.md"
+  - description: "MezaOS CLI/TUI agent exists"
     assert:
       - type: file-exists
-        value: "../../examples/mezaos/drivers/agent.md"
-  - description: "MezaOS scheduler agent exists"
+        value: "../../examples/mezaos/cli-tui/agent.md"
+  - description: "MezaOS validation agent exists"
     assert:
       - type: file-exists
-        value: "../../examples/mezaos/scheduler/agent.md"
+        value: "../../examples/mezaos/validation/agent.md"
 
-  # ── Template placeholders: deterministic (AG-8, CC-3) ──
+  # Template placeholders: deterministic (AG-8, CC-3)
   - description: "AGENTS.md template has placeholders"
     assert:
       - type: contains

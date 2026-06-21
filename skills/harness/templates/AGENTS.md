@@ -25,4 +25,5 @@ This team uses OpenCode's parallel task system. Agents do not call each other di
 
 1. Place each agent definition under `.opencode/agents/{{AGENT_NAME}}.md`
 2. Place each skill under `.opencode/skills/{{SKILL_NAME}}/SKILL.md`
-3. Reference agent roles and triggers in your orchestrator configuration
+3. Optionally mirror portable skills under `.agents/skills/{{SKILL_NAME}}/SKILL.md`
+4. Reference agent roles and trigger guidance in your orchestrator configuration

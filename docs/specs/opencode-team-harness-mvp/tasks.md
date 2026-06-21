@@ -3,7 +3,7 @@
 ## Review Workload Forecast
 
 | Field | Value |
-|-------|-------|
+|---|---|
 | Estimated changed lines | ~700–800 |
 | 400-line budget risk | Medium |
 | Chained PRs recommended | Yes |
@@ -14,7 +14,7 @@
 ### Suggested Work Units
 
 | Unit | Goal | Likely PR | Notes |
-|------|------|-----------|-------|
+|---|---|---|---|
 | 1 | **Identity Refactor** — strip Claude Code from READMEs (EN/KO/JA), index.html, privacy.html; remove `.claude-plugin/`; update GitHub links; clean SKILL.md line 13 | PR 1 | base=main; standalone completion; verifiable by `grep -r "Claude Code"` |
 | 2 | **OpenCode Generation** — AGENTS.md, `skills/harness/templates/`, docs (compatibility, agentic-development), evals/promptfoo/, examples/mezaos/ | PR 2 | depends on PR 1 (clean identity first); additive only, no deletions |
 

@@ -15,7 +15,7 @@
 | ID | Requirement | Strength |
 |----|-------------|----------|
 | IR-1 | All README files (EN, KO, JA) MUST reference OpenCode, not Claude Code | MUST |
-| IR-2 | Install paths in all docs MUST use `~/.config/opencode/skills/` — no `~/.claude/` paths | MUST |
+| IR-2 | Recommended install paths in docs MUST use local per-project `.opencode/skills/` installation — no `~/.claude/` paths | MUST |
 | IR-3 | `index.html` and `privacy.html` MUST remove Claude Code branding and platform references | MUST |
 | IR-4 | `plugin.json` MUST reference OpenCode, not Claude Code | MUST |
 | IR-5 | `.claude-plugin/` directory MUST be removed from the repository | MUST |
@@ -28,7 +28,7 @@
 - GIVEN README.md, README_KO.md, and README_JA.md
 - WHEN each is reviewed for Claude Code references
 - THEN no instance of "Claude Code", "Claude", or `~/.claude/` remains in prose
-- AND install instructions reference `~/.config/opencode/skills/`
+- AND install instructions recommend local per-project `.opencode/skills/` installation
 
 #### Scenario: Orphaned plugin directory removed
 
@@ -54,7 +54,7 @@
 |----|-------------|----------|
 | AG-1 | The system MUST generate an AGENTS.md file as the team entry point | MUST |
 | AG-2 | AGENTS.md MUST describe each agent's role, trigger, and responsibility | MUST |
-| AG-3 | Individual agent definitions MUST be written to `.opencode/agents/<agent-name>.md` | MUST |
+| AG-3 | Individual agent definitions MUST be written to `.opencode/agents/{{AGENT_NAME}}.md` | MUST |
 | AG-4 | Each agent definition MUST include: name, purpose, trigger conditions, and output contract | MUST |
 | AG-5 | The system MUST generate `docs/agentic-development/team-architecture.md` with architecture rationale | MUST |
 | AG-6 | The team architecture doc SHOULD include interaction flow between agents | SHOULD |
@@ -85,9 +85,9 @@
 
 | ID | Requirement | Strength |
 |----|-------------|----------|
-| SG-1 | Generated skills MUST be placed in `.opencode/skills/<skill-name>/SKILL.md` | MUST |
-| SG-2 | Each skill MUST include valid frontmatter: name, trigger conditions, and description | MUST |
-| SG-3 | The system SHOULD also generate a portable copy under `.agents/skills/<skill-name>/SKILL.md` | SHOULD |
+| SG-1 | Generated skills MUST be placed in `.opencode/skills/{{SKILL_NAME}}/SKILL.md` | MUST |
+| SG-2 | Each skill MUST include valid frontmatter with `name` and `description`; trigger guidance MUST live in description, metadata, or body, not a `trigger:` frontmatter key | MUST |
+| SG-3 | The system SHOULD also generate a portable copy under `.agents/skills/{{SKILL_NAME}}/SKILL.md` | SHOULD |
 | SG-4 | `.opencode/skills/` SHALL be treated as the primary/authoritative location | MUST |
 | SG-5 | `.agents/skills/` MUST NOT be required for normal operation | MUST |
 | SG-6 | Skills MUST NOT contain runtime AI logic — behavior is deterministic from context | MUST |
@@ -97,14 +97,14 @@
 
 - GIVEN an agent definition with a domain role
 - WHEN skill generation runs
-- THEN `.opencode/skills/<skill-name>/SKILL.md` exists with valid frontmatter
+- THEN `.opencode/skills/{{SKILL_NAME}}/SKILL.md` exists with valid frontmatter
 - AND the skill is a plain markdown file with no encoded prompts
 
 #### Scenario: Portable compat optional (edge)
 
 - GIVEN `.opencode/skills/` has been generated
 - WHEN the system runs with portable compat enabled
-- THEN `.agents/skills/<skill-name>/SKILL.md` mirrors the primary
+- THEN `.agents/skills/{{SKILL_NAME}}/SKILL.md` mirrors the primary
 - WHEN the system runs with portable compat disabled
 - THEN `.agents/skills/` is NOT created
 

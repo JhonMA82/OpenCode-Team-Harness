@@ -5,23 +5,26 @@
 -->
 # MezaOS — Agent Team (Reference Example)
 
-> **Purpose**: Illustrate the structure of a generated agent team for a Meza Operating System project.
+> **Purpose**: Illustrate the structure of a generated agent team for the real MezaOS stack.
 > **Status**: Reference only — NOT a runtime dependency (AG-7).
 
 This directory contains a reference example of what `skills/harness/` generates when invoked for a MezaOS project. Use it as a template to understand the output format.
 
 ## Team Overview
 
-- **MezaOS**: A modular operating system built on a microkernel architecture
-- **Domain**: OS development, microkernel, driver management, scheduling
+- **MezaOS**: A Universal Blue/Fedora Atomic image project built with BlueBuild.
+- **Language**: Go.
+- **CLI stack**: Cobra, Bubble Tea, Bubbles, Lip Gloss, and Huh.
+- **Configuration**: `mezaos.yml`.
+- **Validation**: BlueBuild compiler checks, dotfiles validator, and golden tests.
 
 ## Agent Definitions
 
 | File | Agent | Role |
 |------|-------|------|
-| [kernel/agent.md](kernel/agent.md) | Kernel Specialist | Microkernel architecture, IPC, memory management |
-| [drivers/agent.md](drivers/agent.md) | Driver Specialist | Device drivers, hardware abstraction, DMA |
-| [scheduler/agent.md](scheduler/agent.md) | Scheduler Specialist | Process scheduling, load balancing, priorities |
+| [image-build/agent.md](image-build/agent.md) | Image Build Specialist | BlueBuild compiler, Universal Blue/Fedora Atomic image layout, `mezaos.yml` |
+| [cli-tui/agent.md](cli-tui/agent.md) | CLI/TUI Specialist | Go, Cobra commands, Bubble Tea flows, Bubbles components, Lip Gloss styling, Huh forms |
+| [validation/agent.md](validation/agent.md) | Validation Specialist | Dotfiles validator, golden tests, generated artifact checks |
 
 ## Notes
 

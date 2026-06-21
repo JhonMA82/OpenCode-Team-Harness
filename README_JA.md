@@ -58,11 +58,12 @@ Phase 6: 検証とテスト
 
 ## インストール
 
-### グローバルスキルとして直接インストール
+### プロジェクトごとのローカルインストール
 
 ```shell
-# skillsディレクトリを ~/.config/opencode/skills/ にコピー
-cp -r skills/harness ~/.config/opencode/skills/harness
+# 利用側プロジェクトで実行
+mkdir -p .opencode/skills
+cp -r /path/to/OpenCode-Team-Harness/skills/harness .opencode/skills/harness
 ```
 
 ## プラグイン構成
@@ -127,9 +128,9 @@ your-project/
 │   │   └── qa.md
 │   └── skills/          # スキルファイル
 │       ├── analyze/
-│       │   └── skill.md
+│       │   └── SKILL.md
 │       └── build/
-│           ├── skill.md
+│           ├── SKILL.md
 │           └── references/
 ```
 

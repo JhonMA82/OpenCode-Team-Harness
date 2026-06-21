@@ -58,11 +58,12 @@ Phase 6: 검증 및 테스트
 
 ## 설치
 
-### 글로벌 스킬로 직접 설치
+### 프로젝트별 로컬 설치
 
 ```shell
-# skills 디렉토리를 ~/.config/opencode/skills/에 복사
-cp -r skills/harness ~/.config/opencode/skills/harness
+# 소비자 프로젝트에서 실행
+mkdir -p .opencode/skills
+cp -r /path/to/OpenCode-Team-Harness/skills/harness .opencode/skills/harness
 ```
 
 ## 플러그인 구조
@@ -127,9 +128,9 @@ OpenCode에서 다음과 같이 트리거한다:
 │   │   └── qa.md
 │   └── skills/          # 스킬 파일
 │       ├── analyze/
-│       │   └── skill.md
+│       │   └── SKILL.md
 │       └── build/
-│           ├── skill.md
+│           ├── SKILL.md
 │           └── references/
 ```
 
