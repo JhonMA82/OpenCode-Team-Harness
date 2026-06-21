@@ -1,10 +1,15 @@
 ---
 name: harness
 description: >-
-  Configure a harness. A meta skill that defines specialized agents and creates the skills those agents use.
-  Use this when (1) the user asks to "configure a harness" or "build a harness", (2) the user asks for "harness design" or "harness engineering",
-  (3) building a harness-based automation system for a new domain/project,
-  or (4) reconfiguring or extending an existing harness.
+  Configure a harness. A meta skill that defines specialized agents and creates
+  the skills those agents use. Use this when (1) the user asks to "configure a
+  harness" or "build a harness", (2) the user asks for "harness design" or
+  "harness engineering", (3) building a harness-based automation system for a
+  new domain/project, or (4) reconfiguring or extending an existing harness.
+compatibility:
+  - opencode
+metadata:
+  portable_skills: true
 ---
 
 # Harness — Agent & Skill Architect

@@ -30,12 +30,19 @@ Un meta-skill que diseña equipos de agentes especializados por dominio, define 
 
 ## Visión General
 
-Harness aprovecha el sistema de tareas en paralelo de OpenCode para descomponer tareas complejas en equipos coordinados de agentes especializados. Con solo decir "construí un harness para este proyecto", genera automáticamente definiciones de agentes (`.opencode/agents/`) y skills (`.opencode/skills/`) adaptadas a tu dominio.
+Harness aprovecha el sistema de tareas en paralelo de OpenCode para descomponer
+tareas complejas en equipos coordinados de agentes especializados. Con solo decir
+"construí un harness para este proyecto", genera automáticamente definiciones de
+agentes (`.opencode/agents/`) y skills (`.opencode/skills/`) adaptadas a tu
+dominio.
 
 ## Características Principales
 
-- **Diseño de Equipos** — 6 patrones arquitectónicos: canalización, distribución/reunificación, grupo de expertos, productor-revisor, supervisor y delegación jerárquica
-- **Generación de Skills** — Genera skills automáticas con Divulgación Progresiva para una gestión eficiente del contexto
+- **Diseño de Equipos** — 6 patrones arquitectónicos: canalización,
+  distribución/reunificación, grupo de expertos, productor-revisor, supervisor y
+  delegación jerárquica
+- **Generación de Skills** — Genera skills automáticas con Divulgación
+  Progresiva para una gestión eficiente del contexto
 - **Orquestación** — Paso de datos entre agentes, manejo de errores y protocolos de coordinación
 - **Validación** — Verificación de disparadores, pruebas en seco y tests comparativos con/sin skill
 
@@ -59,7 +66,9 @@ Fase 6: Validación y Pruebas
 
 ### Instalación local por proyecto
 
-Instalá Harness dentro del proyecto donde querés usarlo. Esta es la instalación recomendada porque mantiene la configuración versionada con el repositorio y evita modificar la configuración global de OpenCode.
+Instalá Harness dentro del proyecto donde querés usarlo. Esta es la
+instalación recomendada porque mantiene la configuración versionada con el
+repositorio y evita modificar la configuración global de OpenCode.
 
 ```shell
 # Desde el proyecto consumidor
@@ -211,11 +220,20 @@ visuales y definir planes de pruebas A/B con revisión iterativa de calidad.
 
 ### Harness 100
 
-**[revfactory/harness-100](https://github.com/revfactory/harness-100)** — 100 harnesses de equipos de agentes listos para producción en 10 dominios, disponibles en inglés y coreano (200 paquetes en total). Cada harness incluye 4-5 agentes especializados, una skill de orquestación y skills específicas del dominio — todo generado por este proyecto. 1.808 archivos Markdown que cubren creación de contenido, desarrollo de software, datos/IA, estrategia de negocio, educación, legal, salud y más.
+**[revfactory/harness-100](https://github.com/revfactory/harness-100)** — 100
+harnesses de equipos de agentes listos para producción en 10 dominios,
+disponibles en inglés y coreano (200 paquetes en total). Cada harness incluye
+4-5 agentes especializados, una skill de orquestación y skills específicas del
+dominio — todo generado por este proyecto. 1.808 archivos Markdown que cubren
+creación de contenido, desarrollo de software, datos/IA, estrategia de negocio,
+educación, legal, salud y más.
 
 ### Investigación: prueba A/B de efectividad de Harness
 
-**[revfactory/claude-code-harness](https://github.com/revfactory/claude-code-harness)** — Un experimento controlado en 15 tareas de ingeniería de software que mide el impacto de la preconfiguración estructurada en la calidad de la salida de agentes LLM.
+**[revfactory/claude-code-harness](https://github.com/revfactory/claude-code-harness)**
+— Un experimento controlado en 15 tareas de ingeniería de software que mide el
+impacto de la preconfiguración estructurada en la calidad de la salida de
+agentes LLM.
 
 | Métrica | Sin Harness | Con Harness | Mejora |
 | --- | :-: | :-: | :-: |
@@ -223,7 +241,8 @@ visuales y definir planes de pruebas A/B con revisión iterativa de calidad.
 | Tasa de Éxito | — | — | **100%** (15/15) |
 | Varianza de Salida | — | — | **-32%** |
 
-Hallazgo clave: la efectividad escala con la complejidad de la tarea — cuanto más difícil, mayor la mejora (+23.8 Básico, +29.6 Avanzado, +36.2 Experto).
+Hallazgo clave: la efectividad escala con la complejidad de la tarea — cuanto
+más difícil, mayor la mejora (+23.8 Básico, +29.6 Avanzado, +36.2 Experto).
 
 > Artículo completo: *Hwang, M. (2026). Harness: Structured Pre-Configuration for Enhancing LLM Code Agent Output Quality.*
 
