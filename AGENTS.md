@@ -5,9 +5,13 @@
 -->
 # OpenCode Team Harness
 
+## Purpose
+
 **Orchestrator agent**: Generates structured agent teams for OpenCode projects.
 
 This repository contains the meta-skill at `skills/harness/SKILL.md`. When invoked from a consumer project, it generates:
+
+## Outputs
 
 - `AGENTS.md` — team entry point with role definitions.
 - `.opencode/agents/{{AGENT_NAME}}.md` — individual agent specs.
@@ -17,7 +21,7 @@ This repository contains the meta-skill at `skills/harness/SKILL.md`. When invok
 ## Generated agent roles
 
 | Agent | Role | Trigger guidance |
-|---|---|---|
+| --- | --- | --- |
 | Domain Analyzer | Analyze project context and choose architecture. | User invokes Harness for a project/domain. |
 | Agent Writer | Generate agent definitions from templates. | Domain analysis is complete. |
 | Skill Writer | Generate skill definitions from templates. | Agent definitions are complete. |
@@ -26,5 +30,7 @@ This repository contains the meta-skill at `skills/harness/SKILL.md`. When invok
 ## Usage
 
 Invoke Harness from a consumer project. The meta-skill prompts for project context, fills templates, and writes generated artifacts into that consumer project's directory.
+
+## References
 
 See `docs/agentic-development/team-architecture.md` for architecture rationale.

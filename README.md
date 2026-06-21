@@ -8,6 +8,7 @@
 </p>
 
 > ⚠️ **Port a OpenCode**: Versión adaptada a OpenCode de [revfactory/harness](https://github.com/JhonMA82/OpenCode-Team-Harness).
+>
 > - **Arquitectura**: Equipos de agentes → tareas paralelas
 > - **Compatibilidad**: Solo OpenCode (NO compatible con Claude Code)
 > - Ver [CHANGES.md](CHANGES.md) para detalles completos.
@@ -93,10 +94,10 @@ Diseña un equipo de agentes para este dominio
 Configura un harness
 ```
 
-### Modos de Ejecución
+### Modos de ejecución
 
 | Modo | Descripción | Recomendado Para |
-|------|-------------|------------------|
+| --- | --- | --- |
 | **Tareas en paralelo** (por defecto) | Herramienta de tareas con `run_in_background: true` | 2+ agentes que requieren colaboración |
 | **Tareas secuenciales** | Herramienta de tareas con ejecución ordenada | Tareas únicas, sin comunicación entre agentes |
 
@@ -104,10 +105,10 @@ Configura un harness
   <img src="harness_team.png" alt="Equipo de Agentes Harness" width="500">
 </p>
 
-### Patrones Arquitectónicos
+### Patrones arquitectónicos
 
 | Patrón | Descripción |
-|--------|-------------|
+| --- | --- |
 | Canalización | Tareas secuenciales dependientes |
 | Distribución/reunificación | Tareas paralelas independientes |
 | Grupo de expertos | Invocación selectiva según contexto |
@@ -140,6 +141,7 @@ tu-proyecto/
 Copiá cualquier prompt en OpenCode después de instalar Harness:
 
 **Investigación Profunda**
+
 ```
 Construí un harness para investigación profunda. Necesito un equipo de agentes
 capaz de investigar cualquier tema desde múltiples ángulos — búsqueda web,
@@ -148,6 +150,7 @@ y producir un informe completo.
 ```
 
 **Desarrollo de sitios web**
+
 ```
 Construí un harness para desarrollo integral de sitios web. El equipo debe
 manejar diseño, interfaz (React/Next.js), servidor (API) y QA en un flujo
@@ -155,6 +158,7 @@ coordinado desde el wireframe hasta el despliegue.
 ```
 
 **Producción de Webtoons / Cómics**
+
 ```
 Construí un harness para producción de episodios de webtoon. Necesito agentes
 para guion, diseño de personajes, planificación de viñetas y edición de
@@ -163,6 +167,7 @@ de estilo.
 ```
 
 **Planificación de Contenido para YouTube**
+
 ```
 Construí un harness para creación de contenido en YouTube. El equipo debe
 investigar tendencias, escribir guiones, optimizar títulos/etiquetas para buscadores
@@ -170,6 +175,7 @@ y planificar conceptos de miniaturas — todo coordinado por un agente superviso
 ```
 
 **Revisión y Refactorización de Código**
+
 ```
 Construí un harness para revisión integral de código. Quiero agentes en
 paralelo revisando arquitectura, vulnerabilidades de seguridad, cuellos de
@@ -178,6 +184,7 @@ solo informe.
 ```
 
 **Documentación Técnica**
+
 ```
 Construí un harness que genere documentación de API a partir de este código.
 Los agentes deben analizar endpoints, escribir descripciones, generar ejemplos
@@ -185,6 +192,7 @@ de uso y revisar que esté completa.
 ```
 
 **Diseño de Pipelines de Datos**
+
 ```
 Construí un harness para diseñar pipelines de datos. Necesito agentes para
 diseño de esquemas, lógica ETL, reglas de validación y configuración de
@@ -192,6 +200,7 @@ monitoreo que deleguen subtareas jerárquicamente.
 ```
 
 **Campaña de Marketing**
+
 ```
 Construí un harness para creación de campañas de marketing. El equipo debe
 investigar el mercado objetivo, redactar copys publicitarios, diseñar conceptos
@@ -209,7 +218,7 @@ visuales y definir planes de pruebas A/B con revisión iterativa de calidad.
 **[revfactory/claude-code-harness](https://github.com/revfactory/claude-code-harness)** — Un experimento controlado en 15 tareas de ingeniería de software que mide el impacto de la preconfiguración estructurada en la calidad de la salida de agentes LLM.
 
 | Métrica | Sin Harness | Con Harness | Mejora |
-|---------|:-:|:-:|:-:|
+| --- | :-: | :-: | :-: |
 | Puntaje de Calidad Promedio | 49.5 | 79.3 | **+60%** |
 | Tasa de Éxito | — | — | **100%** (15/15) |
 | Varianza de Salida | — | — | **-32%** |

@@ -6,6 +6,80 @@ prompts: []
 providers: []
 
 tests:
+  # Installation guidance: local per-project install is recommended.
+  - description: "README recommends local per-project installation"
+    assert:
+      - type: contains
+        value: "Instalación local por proyecto"
+        file: "../../README.md"
+      - type: contains
+        value: "Esta es la instalación recomendada"
+        file: "../../README.md"
+      - type: contains
+        value: "cp -r /ruta/a/OpenCode-Team-Harness/skills/harness .opencode/skills/harness"
+        file: "../../README.md"
+
+  # Runtime model: no external AI service is required by generated artifacts.
+  - description: "OpenCode compatibility documents no runtime dependency"
+    assert:
+      - type: contains
+        value: "No runtime dependencies"
+        file: "../../docs/compatibility/opencode.md"
+      - type: contains
+        value: "No external tooling is required"
+        file: "../../docs/compatibility/opencode.md"
+      - type: contains
+        value: "no AI inference"
+        file: "../../skills/harness/templates/AGENTS.md"
+      - type: contains
+        value: "no AI inference"
+        file: "../../skills/harness/templates/skill.md"
+
+  # OpenCode routes: primary generated outputs use .opencode paths.
+  - description: "Generated routes use OpenCode project paths"
+    assert:
+      - type: contains
+        value: ".opencode/agents/{{AGENT_NAME}}.md"
+        file: "../../AGENTS.md"
+      - type: contains
+        value: ".opencode/skills/{{SKILL_NAME}}/SKILL.md"
+        file: "../../AGENTS.md"
+      - type: contains
+        value: ".opencode/agents/{{AGENT_NAME}}.md"
+        file: "../../skills/harness/templates/AGENTS.md"
+      - type: contains
+        value: ".opencode/skills/{{SKILL_NAME}}/SKILL.md"
+        file: "../../skills/harness/templates/AGENTS.md"
+
+  # Portable compatibility: .agents/skills is optional, not authoritative.
+  - description: ".agents skills path is optional portable compatibility only"
+    assert:
+      - type: contains
+        value: "optional portable skill mirror"
+        file: "../../AGENTS.md"
+      - type: contains
+        value: "Optionally mirror portable skills under `.agents/skills/{{SKILL_NAME}}/SKILL.md`"
+        file: "../../skills/harness/templates/AGENTS.md"
+      - type: contains
+        value: "The harness generates skills to `.opencode/skills/` as the primary path"
+        file: "../../docs/compatibility/portable-agents.md"
+      - type: contains
+        value: ".agents/skills/` is NOT required for normal operation"
+        file: "../../docs/compatibility/portable-agents.md"
+
+  # Example scope: MezaOS is a reference example only.
+  - description: "MezaOS appears only as a reference example"
+    assert:
+      - type: contains
+        value: "Reference-only example"
+        file: "../../examples/mezaos/README.md"
+      - type: contains
+        value: "NOT a runtime dependency"
+        file: "../../examples/mezaos/README.md"
+      - type: contains
+        value: "what `skills/harness/` generates when invoked for a MezaOS project"
+        file: "../../examples/mezaos/README.md"
+
   # Identity Refactor: no legacy Claude Code plugin remnants (EI-3)
   - description: "No legacy Claude Code plugin remnants in README.md"
     assert:
