@@ -1,184 +1,167 @@
-﻿# Agent & Task Design Patterns
+# Agent & Task Design Patterns
 
-## 실행 모드: Task 병렬 vs 순차
+## Execution mode: Parallel vs sequential Task
 
-두 가지 실행 모드의 핵심 차이를 이해하고 적합한 모드를 선택한다.
+Understand the core difference between the two execution modes and choose the appropriate mode.
 
-### Task 병렬 호출 — 기본 모드
+### Parallel Task calls — default mode
 
-여러 Task를 run_in_background: true로 동시 호출하여 병렬 실행한다. 각 Task 결과는 parent session에서 수신하여 취합한다.
-
+Call multiple Tasks concurrently with `run_in_background: true`. Each Task result is received and aggregated in the parent session.
 
 [parent]
     ├── Task({ name: "agent-A", run_in_background: true })
     ├── Task({ name: "agent-B", run_in_background: true })
-    └── 결과 취합 및 통합
+    └── collect and integrate results
 
 
-**핵심 파라미터:**
+**Key parameters:**
 - Task({ name, prompt, model, tools, run_in_background })
 
-**특징:**
-- 병렬 실행으로 시간 단축
-- 각 Task가 독립적인 컨텍스트에서 실행
-- 결과 취합은 parent가 담당
+**Characteristics:**
+- Reduces time through parallel execution.
+- Each Task runs in an independent context.
+- Parent is responsible for collecting results.
 
-**제약:**
-- Task 간 직접 통신 불가 (결과는 parent를 통해 전달)
-- 의존성 있는 작업은 순차 호출 사용
+**Constraints:**
+- Tasks cannot communicate directly with each other (results are passed through parent).
+- Use sequential calls for work with dependencies.
 
-### Task 순차 호출 — 의존성 모드
+### Sequential Task calls — dependency mode
 
-이전 Task의 결과를 다음 Task의 입력으로 전달하며 순차 실행한다.
-
+Pass the previous Task result into the next Task as input and execute sequentially.
 
 [parent]
-    ├── Task({ name: "agent-1" }) → 결과: _workspace/01_artifact.md
-    └── Task({ name: "agent-2", 입력: 01 결과 }) → 결과: _workspace/02_artifact.md
+    ├── Task({ name: "agent-1" }) → result: _workspace/01_artifact.md
+    └── Task({ name: "agent-2", input: 01 result }) → result: _workspace/02_artifact.md
 
 
-**적합한 경우:**
-- 각 단계가 이전 단계의 산출물에 의존
-- 파이프라인 작업
+**Best fit:**
+- Each step depends on the previous step's artifact.
+- Pipeline work.
 
-### 모드 선택 의사결정 트리
+### Mode selection decision tree
 
-
-병렬 실행이 가능한가? (독립적 작업)
-├── Yes → Task 병렬 호출 (기본값)
-│         결과를 parent에서 취합
+Can the work run in parallel? (independent work)
+├── Yes → parallel Task calls (default)
+│         collect results in parent
 │
-└── No (순차 의존) → Task 순차 호출
-                    이전 결과를 다음 입력으로 전달
+└── No (sequential dependency) → sequential Task calls
+                    pass previous result into next input
 
-
-> **핵심 원칙:** 독립적 작업은 병렬, 순차 의존은 순차.
+> **Core principle:** independent work is parallel; sequential dependency is sequential.
 
 ---
 
-## Task 아키텍처 유형
+## Task architecture types
 
-### 1. 파이프라인 (Pipeline)
-순차적 작업 흐름. 이전 Task의 출력이 다음 Task의 입력.
+### 1. Pipeline
+Sequential workflow. The previous Task output becomes the next Task input.
 
+[analysis] → [design] → [implementation] → [verification]
 
-[분석] → [설계] → [구현] → [검증]
+**Best fit:** each step strongly depends on the previous step's artifact.
+**Example:** novel writing — worldbuilding → characters → plot → drafting → editing.
+**Caution:** bottlenecks delay the entire pipeline. Design each step to be as independent as possible.
 
+### 2. Fan-out/Fan-in
+Parallel processing followed by integration. Independent work runs concurrently.
 
-**적합한 경우:** 각 단계가 이전 단계의 산출물에 강하게 의존
-**예시:** 소설 집필 — 세계관 → 캐릭터 → 플롯 → 집필 → 편집
-**주의:** 병목이 전체 파이프라인을 지연시킴. 각 단계를 가능한 독립적으로 설계할 것.
+         ┌→ [SpecialistA] ─┐
+[distribute] → ├→ [SpecialistB] ─┼→ [integrate]
+         └→ [SpecialistC] ─┘
 
-### 2. 팬아웃/팬인 (Fan-out/Fan-in)
-병렬 처리 후 결과 통합. 독립적 작업을 동시 수행.
+**Best fit:** the same input needs analysis from different perspectives/areas.
+**Example:** integrated research — official/media/community/background research in parallel → integrated report.
+**Caution:** integration quality determines overall quality.
+**Task pattern:** MUST use parallel Task calls.
 
+### 3. Expert Pool
+Select and call the appropriate specialist based on the situation.
 
-         ┌→ [전문가A] ─┐
-[분배] → ├→ [전문가B] ─┼→ [통합]
-         └→ [전문가C] ─┘
+[router] → { expertA | expertB | expertC }
 
+**Best fit:** different handling is needed depending on input type.
+**Example:** code review — call only the relevant security/performance/architecture specialists.
+**Caution:** router classification accuracy is critical.
+**Task pattern:** call Tasks sequentially or in parallel as needed.
 
-**적합한 경우:** 동일 입력에 대해 서로 다른 관점/영역의 분석이 필요
-**예시:** 종합 리서치 — 공식/미디어/커뮤니티/배경 동시 조사 → 통합 보고
-**주의:** 통합 단계의 품질이 전체 품질을 결정.
-**Task 패턴:** 반드시 Task 병렬 호출을 사용해야 한다.
+### 4. Producer-Reviewer
+A generation Task and validation Task work as a pair.
 
-### 3. 전문가 풀 (Expert Pool)
-상황에 따라 적절한 전문가를 선택 호출.
+[produce] → [review] → (if issue) → rerun [produce]
 
+**Best fit:** artifact quality assurance matters and objective validation criteria exist.
+**Example:** webtoon — artist generates → reviewer checks → regenerate problem panels.
+**Caution:** set a maximum retry count (2–3) to prevent infinite loops.
 
-[라우터] → { 전문가A | 전문가B | 전문가C }
+### 5. Supervisor
+A central agent manages work state and dynamically distributes work to child agents.
 
+         ┌→ [WorkerA]
+[supervisor] ─┼→ [WorkerB]    ← supervisor watches state and distributes dynamically
+         └→ [WorkerC]
 
-**적합한 경우:** 입력 유형에 따라 다른 처리가 필요
-**예시:** 코드 리뷰 — 보안/성능/아키텍처 전문가 중 해당 영역만 호출
-**주의:** 라우터의 분류 정확도가 핵심.
-**Task 패턴:** 필요할 때마다 Task를 순차 또는 병렬로 호출.
+**Best fit:** workload is variable or work distribution must be decided at runtime.
+**Example:** large code migration — supervisor analyzes the file list and assigns batches to workers.
+**Difference from fan-out:** fan-out pre-assigns fixed work; supervisor adjusts dynamically based on progress.
 
-### 4. 생성-검증 (Producer-Reviewer)
-생성 Task와 검증 Task가 쌍으로 동작.
+## Agent call methods
 
-
-[생성] → [검증] → (문제시) → [생성] 재실행
-
-
-**적합한 경우:** 산출물의 품질 보장이 중요하고 객관적 검증 기준이 존재
-**예시:** 웹툰 — artist 생성 → reviewer 검수 → 문제 패널 재생성
-**주의:** 무한 루프 방지를 위해 최대 재시도 횟수(2~3회) 설정 필수.
-
-### 5. 감독자 (Supervisor)
-중앙 에이전트가 작업 상태를 관리하며 하위 에이전트에 동적으로 작업을 분배.
-
-
-         ┌→ [워커A]
-[감독자] ─┼→ [워커B]    ← 감독자가 상태를 보고 동적 분배
-         └→ [워커C]
-
-
-**적합한 경우:** 작업량이 가변적이거나 런타임에 작업 분배를 결정해야 할 때
-**예시:** 대규모 코드 마이그레이션 — 감독자가 파일 목록을 분석하고 워커들에게 배치 할당
-**팬아웃과의 차이:** 팬아웃은 사전에 작업을 고정 분배, 감독자는 진행 상황을 보며 동적 조정
-
-## 에이전트 호출 방식
-
-### 1. Task tool (명시적 호출)
-
+### 1. Task tool (explicit call)
 
 Task({
   name: "explore",
-  prompt: "코드베이스를 탐색해줘",
+  prompt: "Explore the codebase",
   model: "{provider/model}",
   tools: { edit: false, write: false }
 })
 
 
-### 2. @mention (메시지 내 직접 호출)
+### 2. @mention (direct call inside a message)
 
+@explore Explore this codebase
 
-@explore 이 코드베이스를 탐색해줘
+- Call a subagent directly from the message.
+- Receive the result in the parent session.
+- Suitable for simple work.
 
+## Agent type selection
 
-- subagent를 직접 메시지에서 호출
-- 결과를 parent session에서 수신
-- 간단한 작업에 적합
+Specify the agent type through the Task tool `name` parameter.
 
-## 에이전트 타입 선택
+### Built-in types
 
-Task tool의 name 파라미터로 에이전트 타입을 지정한다.
-
-### 빌트인 타입
-
-| 타입 | 도구 접근 | 적합한 용도 |
+| Type | Tool access | Best fit |
 |------|----------|-----------|
-| general-purpose | 전체 (WebSearch, WebFetch 포함) | 웹 조사, 범용 작업 |
-| Explore | 읽기 전용 (Edit/Write 없음) | 코드베이스 탐색, 분석 |
-| Plan | 읽기 전용 (Edit/Write 없음) | 아키텍처 설계, 계획 수립 |
+| general-purpose | Full (including WebSearch, WebFetch) | Web research, general-purpose work |
+| Explore | Read-only (no Edit/Write) | Codebase exploration, analysis |
+| Plan | Read-only (no Edit/Write) | Architecture design, planning |
 
-### 커스텀 타입
+### Custom types
 
-`.opencode/agents/{{AGENT_NAME}}.md`에 에이전트를 정의하면 name: "{{AGENT_NAME}}"으로 호출할 수 있다. 커스텀 에이전트는 전체 도구에 접근 가능.
+If an agent is defined in `.opencode/agents/{{AGENT_NAME}}.md`, it can be called with `name: "{{AGENT_NAME}}"`. Custom agents have access to the full toolset.
 
-### 선택 기준
+### Selection criteria
 
-| 상황 | 권장 | 이유 |
+| Situation | Recommended | Reason |
 |------|------|------|
-| 역할이 복잡하고 여러 세션에서 재사용 | **커스텀 타입** (.opencode/agents/) | 페르소나와 작업 원칙을 파일로 관리 |
-| 단순 조사/수집이고 프롬프트만으로 충분 | **general-purpose** + 상세 프롬프트 | 에이전트 파일 불필요, 프롬프트에 지시 포함 |
-| 코드 읽기만 필요 (분석/리뷰) | **Explore** | 실수로 파일 수정하는 것을 방지 |
-| 설계/계획만 필요 | **Plan** | 분석에 집중, 코드 변경 방지 |
-| 파일 수정이 필요한 구현 작업 | **커스텀 타입** | 전체 도구 접근 + 전문 지시 |
+| Role is complex and reused across sessions | **Custom type** (`.opencode/agents/`) | Manages persona and working principles in a file |
+| Simple research/collection where a prompt is enough | **general-purpose** + detailed prompt | No agent file needed; instructions can live in the prompt |
+| Only code reading is needed (analysis/review) | **Explore** | Prevents accidental file changes |
+| Only design/planning is needed | **Plan** | Focuses on analysis and prevents code changes |
+| Implementation work requiring file changes | **Custom type** | Full tool access + specialized instructions |
 
-**원칙:** 모든 에이전트는 반드시 `.opencode/agents/{{AGENT_NAME}}.md` 파일로 정의한다. 빌트인 타입이라도 에이전트 정의 파일을 생성하여 역할·원칙을 명시한다. 파일로 존재해야 다음 세션에서 재사용 가능하다.
+**Principle:** every agent MUST be defined in a `.opencode/agents/{{AGENT_NAME}}.md` file. Even for built-in types, create an agent definition file that states role and principles. The file must exist so it can be reused in later sessions.
 
-**모델 설정:** `model` 파라미터는 `provider/model` 형식으로 지정합니다. 사용자의 OpenCode 설정(config)에서 구성된 모델을 사용합니다. 예: `anthropic/claude-sonnet-4-20250514`, `openrouter/minimax/minimax-m2.7` 등
+**Model setting:** Set the `model` parameter in `provider/model` format. Use a model configured in the user's OpenCode config. Examples: `anthropic/claude-sonnet-4-20250514`, `openrouter/minimax/minimax-m2.7`.
 
-## 에이전트 정의: Markdown vs JSON
+## Agent definition: Markdown vs JSON
 
 ### Markdown (`.opencode/agents/{{AGENT_NAME}}.md`)
 
 markdown
 ---
-description: "1-2문장 역할 설명. 트리거 키워드 나열."
+description: "1–2 sentence role description. List trigger keywords."
 mode: subagent
 model: openrouter/minimax/minimax-m2.7
 tools:
@@ -186,26 +169,26 @@ tools:
   bash: false
 ---
 
-# Agent Name — 역할 한줄 요약
+# Agent Name — one-line role summary
 
-당신은 [도메인]의 [역할] 전문가입니다.
+You are a [role] specialist in [domain].
 
-## 핵심 역할
-1. 역할1
-2. 역할2
+## Core Responsibilities
+1. Responsibility 1
+2. Responsibility 2
 
-## 작업 원칙
-- 원칙1
-- 원칙2
+## Working Principles
+- Principle 1
+- Principle 2
 
-## 입력/출력 프로토콜
-- 입력: [어디서 무엇을 받는지]
-- 출력: [어디에 무엇을 쓰는지]
-- 형식: [파일 포맷, 구조]
+## Input/Output Protocol
+- Input: [where input comes from and what it contains]
+- Output: [where output is written and what it contains]
+- Format: [file format, structure]
 
-## 에러 핸들링
-- [실패 시 행동]
-- [타임아웃 시 행동]
+## Error Handling
+- [behavior on failure]
+- [behavior on timeout]
 
 
 ### JSON (opencode.json)
@@ -214,7 +197,7 @@ json
 {
   "agent": {
     "my-agent": {
-      "description": "역할 설명",
+      "description": "role description",
       "mode": "subagent",
       "model": "openrouter/minimax/minimax-m2.7",
       "tools": {
@@ -226,70 +209,70 @@ json
 }
 
 
-### 선택 기준
-- **Markdown**: 에이전트 정의가 복잡하고 시스템 프롬프트가 긴 경우
-- **JSON**: 간단한 설정 변경, 내장 에이전트 override
+### Selection criteria
+- **Markdown**: agent definition is complex and has a long system prompt.
+- **JSON**: simple configuration changes or built-in agent overrides.
 
-## 에이전트 정의 구조
+## Agent definition structure
 
 markdown
 ---
 name: agent-name
-description: "1-2문장 역할 설명. 트리거 키워드 나열."
+description: "1–2 sentence role description. List trigger keywords."
 ---
 
-# Agent Name — 역할 한줄 요약
+# Agent Name — one-line role summary
 
-당신은 [도메인]의 [역할] 전문가입니다.
+You are a [role] specialist in [domain].
 
-## 핵심 역할
-1. 역할1
-2. 역할2
+## Core Responsibilities
+1. Responsibility 1
+2. Responsibility 2
 
-## 작업 원칙
-- 원칙1
-- 원칙2
+## Working Principles
+- Principle 1
+- Principle 2
 
-## 입력/출력 프로토콜
-- 입력: [어디서 무엇을 받는지]
-- 출력: [어디에 무엇을 쓰는지]
-- 형식: [파일 포맷, 구조]
+## Input/Output Protocol
+- Input: [where input comes from and what it contains]
+- Output: [where output is written and what it contains]
+- Format: [file format, structure]
 
-## 에러 핸들링
-- [실패 시 행동]
-- [타임아웃 시 행동]
+## Error Handling
+- [behavior on failure]
+- [behavior on timeout]
 
 
-## 에이전트 분리 기준
+## Agent separation criteria
 
-| 기준 | 분리 | 통합 |
+| Criterion | Separate | Combine |
 |------|------|------|
-| 전문성 | 영역이 다르면 분리 | 영역이 겹치면 통합 |
-| 병렬성 | 독립 실행 가능하면 분리 | 순차 종속이면 통합 고려 |
-| 컨텍스트 | 컨텍스트 부담이 크면 분리 | 가볍고 빠르면 통합 |
-| 재사용성 | 다른 팀에서도 쓰면 분리 | 이 팀에서만 쓰면 통합 고려 |
+| Specialization | Separate when areas differ | Combine when areas overlap |
+| Parallelism | Separate when independent execution is possible | Consider combining when sequentially dependent |
+| Context | Separate when context burden is high | Combine when lightweight and fast |
+| Reusability | Separate when useful for other teams | Consider combining when only used by this team |
 
-## 스킬 vs 에이전트 구분
+## Skill vs Agent distinction
 
-| 구분 | 스킬 (Skill) | 에이전트 (Agent) |
+| Category | Skill | Agent |
 |------|-------------|-----------------|
-| 정의 | 절차적 지식 + 도구 번들 | 전문가 페르소나 + 행동 원칙 |
-| 위치 | .opencode/skills/ | .opencode/agents/ |
-| 트리거 | 사용자 요청 키워드 매칭 | Task tool로 명시적 호출 |
-| 크기 | 작은~큰 (워크플로우) | 작은 (역할 정의) |
-| 용도 | "어떻게 하는가" | "누가 하는가" |
+| Definition | Procedural knowledge + tool bundle | Specialist persona + behavioral principles |
+| Location | .opencode/skills/ | .opencode/agents/ |
+| Trigger | User request keyword matching | Explicit call through Task tool |
+| Size | Small to large (workflow) | Small (role definition) |
+| Purpose | "How to do it" | "Who does it" |
 
-스킬은 에이전트가 작업을 수행할 때 참조하는 **절차적 가이드**.
-에이전트는 스킬을 활용하는 **전문가 역할 정의**.
+A skill is a **procedural guide** an agent references while doing work.
+An agent is the **specialist role definition** that uses skills.
 
-## 스킬 ↔ 에이전트 연결 방식
+## Skill ↔ Agent connection methods
 
-에이전트가 스킬을 활용하는 3가지 방식:
+Three ways an agent can use a skill:
 
-| 방식 | 구현 | 적합한 경우 |
+| Method | Implementation | Best fit |
 |------|------|-----------|
-| **Skill 도구 호출** | 에이전트 프롬프트에 Skill 도구로 /skill-name 호출 명시 | 스킬이 독립 워크플로우이고 사용자 호출 가능한 경우 |
-| **프롬프트 내 인라인** | 에이전트 정의 내에 스킬 내용을 직접 포함 | 스킬이 짧고(50줄 이하) 이 에이전트 전용인 경우 |
-| **레퍼런스 로드** | Read로 스킬의 references/ 파일을 필요 시 로드 | 스킬 내용이 크고 조건부로만 필요한 경우 |
+| **Skill tool call** | Agent prompt explicitly instructs using the Skill tool with /skill-name | Skill is an independent workflow and user-invocable |
+| **Inline in prompt** | Include skill content directly in the agent definition | Skill is short (50 lines or less) and specific to this agent |
+| **Load reference** | Read skill references/ files as needed | Skill content is large and only conditionally needed |
 
-권장: 재사용성이 높으면 Skill 도구, 전용이면 인라인, 대용량이면 레퍼런스 로드.
+Recommendation: use the Skill tool for reusable skills, inline for dedicated short skills, and reference loading for large content.

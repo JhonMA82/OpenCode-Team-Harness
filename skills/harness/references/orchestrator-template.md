@@ -1,225 +1,222 @@
-﻿# 오케스트레이터 스킬 템플릿
+# Orchestrator Skill Template
 
-오케스트레이터는 전체 워크플로우를 조율하는 상위 스킬이다. 실행 모드에 따라 두 가지 템플릿을 제공한다.
+The orchestrator is the top-level skill that coordinates the entire workflow. This file provides two templates based on execution mode.
 
 ---
 
-## 템플릿 A: Task 병렬 호출 (기본)
+## Template A: Parallel Task Calls (default)
 
-Task를 run_in_background: true로 동시 호출하여 병렬 실행한다.
+Call Tasks concurrently with `run_in_background: true` for parallel execution.
 
 markdown
 ---
 name: {domain}-orchestrator
-description: "{도메인} 워크플로우를 조율하는 오케스트레이터. {트리거 키워드}."
+description: "Orchestrator that coordinates the {도메인} workflow. {트리거 키워드}."
 ---
 
 # {Domain} Orchestrator
 
-{도메인}의 Task를 조율하여 {최종 산출물}을 생성하는 통합 스킬.
+An integration skill that coordinates Tasks for {도메인} and creates {최종 산출물}.
 
-## 실행 모드: Task 병렬 호출
+## Execution mode: Parallel Task calls
 
-## 에이전트 구성
+## Agent composition
 
-| 에이전트 | 역할 | 스킬 | 출력 |
+| Agent | Role | Skill | Output |
 |---------|------|------|------|
 | {agent-1} | {역할} | {skill} | _workspace/01_{agent-1}.md |
 | {agent-2} | {역할} | {skill} | _workspace/02_{agent-2}.md |
 | ... | | | |
 
-## 워크플로우
+## Workflow
 
-### Phase 1: 준비
-1. 사용자 입력 분석 — {무엇을 파악하는지}
-2. 작업 디렉토리에 _workspace/ 생성
-3. 입력 데이터를 _workspace/00_input/에 저장
+### Phase 1: Preparation
+1. Analyze user input — {무엇을 파악하는지}
+2. Create _workspace/ in the working directory
+3. Save input data under _workspace/00_input/
 
-### Phase 2: 병렬 Task 실행
+### Phase 2: Run parallel Tasks
 
-> **모델 설정:** `model` 파라미터는 `provider/model` 형식으로 지정합니다. 사용자의 OpenCode 설정(config)에서 구성된 모델을 사용합니다. 예: `anthropic/claude-sonnet-4-20250514`, `openrouter/minimax/minimax-m2.7` 등
+> **Model setting:** Set the `model` parameter in `provider/model` format. Use a model configured in the user's OpenCode config. Examples: `anthropic/claude-sonnet-4-20250514`, `openrouter/minimax/minimax-m2.7`.
 
-모든 Task를 동시에 호출:
+Call all Tasks concurrently:
 
 Task({ name: "agent-1", prompt: "{역할 설명 및 작업 지시}", model: "{provider/model}", run_in_background: true })
 Task({ name: "agent-2", prompt: "{역할 설명 및 작업 지시}", model: "{provider/model}", run_in_background: true })
 Task({ name: "agent-3", prompt: "{역할 설명 및 작업 지시}", model: "{provider/model}", run_in_background: true })
 
 
-모든 Task 완료 대기 → 결과 취합
+Wait for all Tasks to finish → collect results
 
-**산출물 저장:**
+**Artifact storage:**
 
-| 에이전트 | 출력 경로 |
+| Agent | Output path |
 |---------|----------|
 | {agent-1} | _workspace/01_{agent-1}_{artifact}.md |
 | {agent-2} | _workspace/02_{agent-2}_{artifact}.md |
 
-### Phase 3: 결과 취합 및 통합
-1. 모든 Task 결과 Read
+### Phase 3: Collect and integrate results
+1. Read all Task results.
 2. {통합/검증 로직}
-3. 최종 산출물 생성: {output-path}/{filename}
+3. Create final artifact: {output-path}/{filename}
 
-### Phase 4: 정리
-1. _workspace/ 디렉토리 보존 (중간 산출물은 삭제하지 않음 — 사후 검증·감사 추적용)
-2. 사용자에게 결과 요약 보고
+### Phase 4: Cleanup
+1. Preserve the _workspace/ directory (do not delete intermediate artifacts — they are used for post-hoc verification and audit trail).
+2. Report a summary of results to the user.
 
-## 데이터 흐름
-
+## Data flow
 
 [parent]
     ├── Task({ name: "agent-1", run_in_background: true })
     ├── Task({ name: "agent-2", run_in_background: true })
     │
-    ├── 결과 수신 ( artifact-1.md )
-    └── 결과 수신 ( artifact-2.md )
+    ├── receive result ( artifact-1.md )
+    └── receive result ( artifact-2.md )
               │
               └────── Read ───────┘
                           │
-                    [parent: 통합]
+                    [parent: integration]
                           │
-                    최종 산출물
+                    final artifact
 
 
-## 에러 핸들링
+## Error handling
 
-| 상황 | 전략 |
+| Situation | Strategy |
 |------|------|
-| Task 1개 실패 | 1회 재시도. 재실패 시 해당 결과 없이 진행, 보고서에 누락 명시 |
-| Task 과반 실패 | 사용자에게 알리고 진행 여부 확인 |
-| 타임아웃 | 현재까지 수집된 부분 결과 사용 |
-| 데이터 충돌 | 출처 명시 후 병기, 삭제하지 않음 |
+| One Task fails | Retry once. If it fails again, proceed without that result and note the omission in the report. |
+| Majority of Tasks fail | Inform the user and confirm whether to proceed. |
+| Timeout | Use the partial results collected so far. |
+| Data conflict | Cite sources side by side; do not delete conflicting data. |
 
-## 테스트 시나리오
+## Test Scenarios
 
-### 정상 흐름
-1. 사용자가 {입력}을 제공
-2. Phase 1에서 {분석 결과} 도출
-3. Phase 2에서 {N}개 Task 병렬 실행
-4. Phase 3에서 산출물 통합하여 최종 결과 생성
-5. 예상 결과: {output-path}/{filename} 생성
+### Happy path
+1. User provides {입력}.
+2. Phase 1 produces {분석 결과}.
+3. Phase 2 runs {N} Tasks in parallel.
+4. Phase 3 integrates artifacts and creates the final result.
+5. Expected result: {output-path}/{filename} is created.
 
-### 에러 흐름
-1. Phase 2에서 {agent-2}가 실패
-2. 1회 재시도 후에도 실패
-3. {agent-2} 결과 없이 나머지 결과로 Phase 3 진행
-4. 최종 보고서에 "{agent-2} 영역 미수집" 명시
+### Error path
+1. {agent-2} fails in Phase 2.
+2. It still fails after one retry.
+3. Phase 3 proceeds with the remaining results and without {agent-2}'s result.
+4. Final report states "{agent-2} area not collected."
 
 
 ---
 
-## 템플릿 B: Task 순차 호출
+## Template B: Sequential Task Calls
 
-이전 Task의 결과를 다음 Task의 입력으로 전달하며 순차 실행한다.
+Pass each previous Task result into the next Task and execute sequentially.
 
 markdown
 ---
 name: {domain}-orchestrator
-description: "{도메인} 워크플로우를 조율하는 오케스트레이터. {트리거 키워드}."
+description: "Orchestrator that coordinates the {도메인} workflow. {트리거 키워드}."
 ---
 
 # {Domain} Orchestrator
 
-{도메인}의 Task를 순차적으로 조율하여 {최종 산출물}을 생성하는 통합 스킬.
+An integration skill that sequentially coordinates Tasks for {도메인} and creates {최종 산출물}.
 
-## 실행 모드: Task 순차 호출
+## Execution mode: Sequential Task calls
 
-## 에이전트 구성
+## Agent composition
 
-| 에이전트 | 역할 | 스킬 | 출력 |
+| Agent | Role | Skill | Output |
 |---------|------|------|------|
 | {agent-1} | {역할} | {skill} | _workspace/01_{agent-1}.md |
 | {agent-2} | {역할} | {skill} | _workspace/02_{agent-2}.md |
 | ... | | | |
 
-## 워크플로우
+## Workflow
 
-### Phase 1: 준비
-1. 사용자 입력 분석 — {무엇을 파악하는지}
-2. 작업 디렉토리에 _workspace/ 생성
-3. 입력 데이터를 _workspace/00_input/에 저장
+### Phase 1: Preparation
+1. Analyze user input — {무엇을 파악하는지}
+2. Create _workspace/ in the working directory
+3. Save input data under _workspace/00_input/
 
-### Phase 2: 순차 Task 실행
+### Phase 2: Run sequential Tasks
 
-이전 Task의 결과를 다음 Task 입력으로 전달:
-
+Pass the previous Task result as input to the next Task:
 
 Phase 2-1: Task({ name: "agent-1", prompt: "{역할 설명}", model: "{provider/model}" })
-→ 결과: _workspace/01_agent-1.md
+→ result: _workspace/01_agent-1.md
 
-Phase 2-2: Task({ name: "agent-2", prompt: "{역할 설명}. 입력: _workspace/01_agent-1.md 참고", model: "{provider/model}" })
-→ 결과: _workspace/02_agent-2.md
+Phase 2-2: Task({ name: "agent-2", prompt: "{역할 설명}. Input: refer to _workspace/01_agent-1.md", model: "{provider/model}" })
+→ result: _workspace/02_agent-2.md
 
-Phase 2-3: Task({ name: "agent-3", prompt: "{역할 설명}. 입력: _workspace/02_agent-2.md 참고", model: "{provider/model}" })
-→ 결과: _workspace/03_agent-3.md
+Phase 2-3: Task({ name: "agent-3", prompt: "{역할 설명}. Input: refer to _workspace/02_agent-2.md", model: "{provider/model}" })
+→ result: _workspace/03_agent-3.md
 
 
-### Phase 3: 최종 통합
-1. 최종 Task 결과 Read
+### Phase 3: Final integration
+1. Read the final Task result.
 2. {최종 통합/검증 로직}
-3. 최종 산출물 생성: {output-path}/{filename}
+3. Create final artifact: {output-path}/{filename}
 
-### Phase 4: 정리
-1. _workspace/ 디렉토리 보존
-2. 사용자에게 결과 요약 보고
+### Phase 4: Cleanup
+1. Preserve the _workspace/ directory.
+2. Report a summary of results to the user.
 
-## 데이터 흐름
-
+## Data flow
 
 [parent]
     │
     ├── Task({ name: "agent-1" }) → artifact-1.md
     │                                    │
     │                                    ↓
-    ├── Task({ name: "agent-2" }) ← artifact-1.md 입력
+    ├── Task({ name: "agent-2" }) ← artifact-1.md input
     │                                    │
     │                                    ↓
-    ├── Task({ name: "agent-3" }) ← artifact-2.md 입력
+    ├── Task({ name: "agent-3" }) ← artifact-2.md input
     │                                    │
     └────────────────────────────────────┘
                         │
-                  [parent: 최종 통합]
+                  [parent: final integration]
                         │
-                  최종 산출물
+                  final artifact
 
 
-## 에러 핸들링
+## Error handling
 
-| 상황 | 전략 |
+| Situation | Strategy |
 |------|------|
-| Task 1개 실패 | 1회 재시도. 재실패 시 해당 결과 없이 진행, 보고서에 누락 명시 |
-| 타임아웃 | 현재까지 수집된 부분 결과 사용 |
-| 데이터 충돌 | 출처 명시 후 병기, 삭제하지 않음 |
+| One Task fails | Retry once. If it fails again, proceed without that result and note the omission in the report. |
+| Timeout | Use the partial results collected so far. |
+| Data conflict | Cite sources side by side; do not delete conflicting data. |
 
-## 테스트 시나리오
+## Test Scenarios
 
-### 정상 흐름
-1. 사용자가 {입력}을 제공
-2. Phase 1에서 {분석 결과} 도출
-3. Phase 2에서 {N}개 Task 순차 실행
-4. Phase 3에서 최종 결과 생성
-5. 예상 결과: {output-path}/{filename} 생성
+### Happy path
+1. User provides {입력}.
+2. Phase 1 produces {분석 결과}.
+3. Phase 2 runs {N} Tasks sequentially.
+4. Phase 3 creates the final result.
+5. Expected result: {output-path}/{filename} is created.
 
-### 에러 흐름
-1. Phase 2-2에서 {agent-2}가 실패
-2. 1회 재시도 후에도 실패
-3. {agent-2} 건너뛰고 Phase 2-3으로 진행
-4. 최종 보고서에 "{agent-2} 미실행" 명시
+### Error path
+1. {agent-2} fails in Phase 2-2.
+2. It still fails after one retry.
+3. Skip {agent-2} and proceed to Phase 2-3.
+4. Final report states "{agent-2} not executed."
 
 
 ---
 
-## 작성 원칙
+## Writing principles
 
-1. **실행 모드를 먼저 명시** — 오케스트레이터 상단에 "Task 병렬 호출" 또는 "Task 순차 호출" 명시
-2. **Task 파라미터를 구체적으로** — name, prompt, model, run_in_background
-3. **파일 경로는 절대적으로** — 상대 경로 금지, _workspace/ 기준 명확한 경로
-4. **Phase 간 의존성 명시** — 어떤 Phase가 어떤 Phase의 결과에 의존하는지
-5. **에러 핸들링은 현실적으로** — "모든 것이 성공한다"고 가정하지 않음
-6. **테스트 시나리오 필수** — 정상 1 + 에러 1 이상
+1. **State the execution mode first** — at the top of the orchestrator, explicitly state "Parallel Task calls" or "Sequential Task calls."
+2. **Make Task parameters concrete** — name, prompt, model, run_in_background.
+3. **Use absolute file paths** — avoid relative ambiguity; make _workspace/ paths explicit.
+4. **State dependencies between Phases** — which Phase depends on which previous Phase output.
+5. **Handle errors realistically** — do not assume everything succeeds.
+6. **Test scenarios are required** — at least one happy path and one error path.
 
-## 실제 오케스트레이터 참고
+## Real orchestrator reference
 
-팬아웃/팬인 패턴의 오케스트레이터 기본 구조:
-준비 → N개 Task 병렬 호출 → 결과 취합 → 통합 → 정리.
-references/team-examples.md의 리서치 팀 예시를 참조.
+Basic structure for a fan-out/fan-in orchestrator:
+prepare → N parallel Task calls → collect results → integrate → cleanup.
+See the research team example in references/team-examples.md.

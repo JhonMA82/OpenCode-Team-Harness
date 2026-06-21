@@ -1,298 +1,298 @@
 ---
 name: harness
 description: >-
-  하네스를 구성합니다. 전문 에이전트를 정의하며, 해당 에이전트가 사용할 스킬을 생성하는 메타 스킬.
-  (1) '하네스 구성해줘', '하네스 구축해줘' 요청 시, (2) '하네스 설계', '하네스 엔지니어링' 요청 시,
-  (3) 새로운 도메인/프로젝트에 대한 하네스 기반 자동화 체계를 구축할 때,
-  (4) 하네스 구성을 재구성하거나 확장할 때 사용.
+  Configure a harness. A meta skill that defines specialized agents and creates the skills those agents use.
+  Use this when (1) the user asks to "configure a harness" or "build a harness", (2) the user asks for "harness design" or "harness engineering",
+  (3) building a harness-based automation system for a new domain/project,
+  or (4) reconfiguring or extending an existing harness.
 ---
 
 # Harness — Agent & Skill Architect
 
-도메인/프로젝트에 맞는 하네스를 구성하고, 각 에이전트의 역할을 정의하며, 에이전트가 사용할 스킬을 생성하는 메타 스킬.
+A meta skill that configures a harness for a domain/project, defines each agent's role, and creates the skills those agents use.
 
-**핵심 원칙:**
+**Core principles:**
 
-1. 에이전트 정의(`.opencode/agents/{{AGENT_NAME}}.md`)와 스킬(`.opencode/skills/{{SKILL_NAME}}/SKILL.md`)을 생성한다.
-2. **Task tool을 사용한 병렬/순차 호출을 기본 실행 모드로 사용한다.**
+1. Create agent definitions (`.opencode/agents/{{AGENT_NAME}}.md`) and skills (`.opencode/skills/{{SKILL_NAME}}/SKILL.md`).
+2. **Use parallel/sequential Task tool calls as the default execution mode.**
 
-## 워크플로우
+## Workflow
 
-### Phase 1: 도메인 분석
-1. 사용자 요청에서 도메인/프로젝트 파악
-2. 핵심 작업 유형 식별 (생성, 검증, 편집, 분석 등)
-3. 기존 에이전트/스킬 확인 (충돌/중복 방지)
-4. 프로젝트 코드베이스 탐색 — 기술 스택, 데이터 모델, 주요 모듈 파악
-5. **사용자 숙련도 감지** — 대화의 맥락 단서(사용 용어, 질문 수준)로 기술 수준을 파악하고, 이후 커뮤니케이션 톤을 조절한다. 코딩 경험이 적은 사용자에게는 "assertion", "JSON schema" 같은 용어를 설명 없이 쓰지 않는다.
+### Phase 1: Domain Analysis
+1. Identify the domain/project from the user request.
+2. Identify the core work types (generation, validation, editing, analysis, etc.).
+3. Check existing agents/skills to prevent conflicts and duplication.
+4. Explore the project codebase — understand the tech stack, data models, and major modules.
+5. **Detect user proficiency** — infer technical level from conversational clues (terminology used, question depth), then adjust communication tone. Do not use terms like "assertion" or "JSON schema" with less experienced users without explaining them.
 
-### Phase 2: 태스크 아키텍처 설계
+### Phase 2: Task Architecture Design
 
-#### 2-1. 실행 모드 선택: Task 병렬 vs 순차
+#### 2-1. Choose execution mode: parallel vs sequential Task
 
-**기본값은 Task 병렬 호출**이다. 2개 이상의 에이전트가 병렬로 독립 작업을 수행할 때는 Task를 run_in_background: true로 동시 호출한다. 각 Task 결과는 parent session에서 수신하여 취합한다.
+**The default is parallel Task calls.** When two or more agents can perform independent work in parallel, call Task concurrently with `run_in_background: true`. Receive each Task result in the parent session and aggregate them.
 
-순차 호출은 이전 Task의 결과가 다음 Task의 입력으로 필요한 경우에 선택한다.
+Use sequential calls when a previous Task result is required as input for the next Task.
 
-#### 2-2. 아키텍처 패턴 선택
+#### 2-2. Choose architecture pattern
 
-1. 작업을 전문 영역으로 분해
-2. Task 호출 구조 결정 (아키텍처 패턴은 references/agent-design-patterns.md 참조)
-   - **파이프라인**: 순차 의존 작업
-   - **팬아웃/팬인**: 병렬 독립 작업
-   - **전문가 풀**: 상황별 선택 호출
-   - **생성-검증**: 생성 후 품질 검수
-   - **감독자**: 중앙 에이전트가 상태 관리 및 동적 분배
+1. Decompose the work into specialist areas.
+2. Decide the Task call structure (see architecture patterns in references/agent-design-patterns.md).
+   - **Pipeline**: sequential dependent work
+   - **Fan-out/Fan-in**: parallel independent work
+   - **Expert Pool**: choose specialists by situation
+   - **Producer-Reviewer**: generate, then review quality
+   - **Supervisor**: central agent manages state and dynamic distribution
 
-#### 2-3. 에이전트 분리 기준
+#### 2-3. Agent separation criteria
 
-전문성·병렬성·컨텍스트·재사용성 4축으로 판단한다. 상세 기준표는 references/agent-design-patterns.md의 "에이전트 분리 기준" 참조.
+Evaluate across four axes: specialization, parallelism, context, and reusability. See the "Agent separation criteria" table in references/agent-design-patterns.md for details.
 
-#### Task tool 기본 파라미터
+#### Task tool default parameters
 
-| 파라미터 | 타입 | 설명 |
+| Parameter | Type | Description |
 | --- | --- | --- |
-| name | string | 호출할 에이전트 이름 |
-| prompt | string | 에이전트에 전달할 지시사항 |
-| model | string | provider/model 형식 (예: openrouter/minimax/minimax-m2.7) |
-| tools | object | { tool_name: boolean } 형태로 도구 활성화/비활성화 |
-| run_in_background | boolean | true면 병렬 실행, false면 순차 대기 |
-| steps | number | 최대 반복 횟수 (선택) |
+| name | string | Name of the agent to call |
+| prompt | string | Instructions passed to the agent |
+| model | string | `provider/model` format (example: openrouter/minimax/minimax-m2.7) |
+| tools | object | Enable/disable tools in `{ tool_name: boolean }` form |
+| run_in_background | boolean | `true` for parallel execution, `false` to wait sequentially |
+| steps | number | Maximum iteration count (optional) |
 
-#### 에이전트 호출 방식
+#### Agent call methods
 
-**1. Task tool (명시적 호출)**
+**1. Task tool (explicit call)**
 
 ```text
 Task({
   name: "explore",
-  prompt: "코드베이스를 탐색해줘",
+  prompt: "Explore the codebase",
   model: "{provider/model}",
   tools: { edit: false, write: false }
 })
 ```
 
-**2. @mention (메시지 내 직접 호출)**
+**2. @mention (direct call inside a message)**
 
 ```text
-@explore 이 코드베이스를 탐색해줘
+@explore Explore this codebase
 ```
 
-- subagent를 직접 메시지에서 호출
-- 결과를 parent session에서 수신
+- Call a subagent directly from the message.
+- Receive the result in the parent session.
 
-### Phase 3: 에이전트 정의 생성
+### Phase 3: Create Agent Definitions
 
-**모든 에이전트는 반드시 `.opencode/agents/{{AGENT_NAME}}.md` 파일로 정의한다.** Task tool의 prompt에 역할을 직접 넣는 것은 금지한다. 이유:
+**Every agent MUST be defined as a `.opencode/agents/{{AGENT_NAME}}.md` file.** Do not put roles directly into Task tool prompts. Reasons:
 
-- 에이전트 정의가 파일로 존재해야 다음 세션에서 재사용 가능
-- Task 간 협업 프로토콜이 명시되어야 결과 취합 품질 보장
-- 하네스의 핵심 가치는 에이전트(누가)와 스킬(어떻게)의 분리
+- Agent definitions must exist as files so they can be reused in later sessions.
+- Task collaboration protocols must be explicit to ensure high-quality aggregation.
+- The harness's core value is separating agents (who) from skills (how).
 
-빌트인 타입(general-purpose, Explore, Plan)을 사용하더라도 에이전트 정의 파일은 생성한다. Task tool의 name 파라미터로 지정하고, 에이전트 정의 파일에는 역할·원칙을 담는다.
+Even when using built-in types (`general-purpose`, `Explore`, `Plan`), create an agent definition file. Specify it through the Task tool `name` parameter, and put the role and principles in the agent definition file.
 
-**모델 설정:** `model` 파라미터는 `provider/model` 형식으로 지정합니다. 사용자의 OpenCode 설정(config)에서 구성된 모델을 사용합니다. 예: `anthropic/claude-sonnet-4-20250514`, `openrouter/minimax/minimax-m2.7` 등
+**Model setting:** Set the `model` parameter in `provider/model` format. Use a model configured in the user's OpenCode config. Examples: `anthropic/claude-sonnet-4-20250514`, `openrouter/minimax/minimax-m2.7`.
 
-각 에이전트를 `.opencode/agents/{{AGENT_NAME}}.md`에 정의한다. 필수 섹션: 핵심 역할, 작업 원칙, 입력/출력 프로토콜, 에러 핸들링.
+Define each agent in `.opencode/agents/{{AGENT_NAME}}.md`. Required sections: core responsibilities, working principles, input/output protocol, and error handling.
 
-> 정의 템플릿과 실제 파일 전문은 references/agent-design-patterns.md의 "에이전트 정의 구조" + references/team-examples.md 참조.
+> For the definition template and full examples, see "Agent definition structure" in references/agent-design-patterns.md and references/team-examples.md.
 
-**QA 에이전트 포함 시 필수 사항:**
+**Required when including a QA agent:**
 
-- QA 에이전트는 general-purpose 타입을 사용하라 (Explore는 읽기 전용이므로 검증 스크립트 실행 불가)
-- QA의 핵심은 "존재 확인"이 아니라 **"경계면 교차 비교"** — API 응답과 프론트 훅을 동시에 읽고 shape을 비교
-- QA는 전체 완성 후 1회가 아니라, **각 모듈 완성 직후 점진적으로 실행** (incremental QA)
-- 상세 가이드: references/qa-agent-guide.md 참조
+- Use the `general-purpose` type for QA agents (`Explore` is read-only, so it cannot run validation scripts).
+- QA is not about "existence checks"; its core is **cross-boundary comparison** — read API responses and frontend hooks together, then compare their shapes.
+- Run QA incrementally **immediately after each module is completed**, not only once after the whole system is finished.
+- Detailed guide: references/qa-agent-guide.md.
 
-### Phase 4: 스킬 생성
+### Phase 4: Create Skills
 
-각 에이전트가 사용할 스킬을 `.opencode/skills/{{SKILL_NAME}}/SKILL.md`에 생성한다. 휴대용 호환이 필요하면 `.agents/skills/{{SKILL_NAME}}/SKILL.md`에도 미러링한다. 상세 작성 가이드는 references/skill-writing-guide.md 참조.
+Create each agent's skills in `.opencode/skills/{{SKILL_NAME}}/SKILL.md`. If portable compatibility is needed, mirror them under `.agents/skills/{{SKILL_NAME}}/SKILL.md`. See references/skill-writing-guide.md for the detailed writing guide.
 
-#### 4-1. 스킬 구조
+#### 4-1. Skill structure
 
 ```text
 skill-name/
-├── SKILL.md (필수)
-│   ├── YAML frontmatter (name, description 필수)
-│   └── Markdown 본문
-└── Bundled Resources (선택)
-    ├── scripts/    - 반복/결정적 작업용 실행 코드
-    ├── references/ - 조건부 로딩하는 참조 문서
-    └── assets/     - 출력에 사용되는 파일 (템플릿, 이미지 등)
+├── SKILL.md (required)
+│   ├── YAML frontmatter (name and description required)
+│   └── Markdown body
+└── Bundled Resources (optional)
+    ├── scripts/    - executable code for repeatable/deterministic work
+    ├── references/ - reference docs loaded conditionally
+    └── assets/     - files used in outputs (templates, images, etc.)
 ```
 
-#### 4-2. Description 작성 — 적극적 트리거 유도
+#### 4-2. Writing descriptions — encourage active triggering
 
-description은 스킬의 주요 트리거 메커니즘이다. OpenCode는 `trigger:` frontmatter 키에 의존하지 않으므로, 트리거 정보는 description, metadata 또는 본문에 작성한다. description은 **적극적("pushy")**으로 작성한다.
+The `description` is the skill's main trigger mechanism. OpenCode does not rely on a `trigger:` frontmatter key, so put trigger information in the description, metadata, or body. Write descriptions **actively ("pushy")**.
 
-**나쁜 예:** "PDF 문서를 처리하는 스킬"
+**Bad example:** "A skill for processing PDF documents"
 
-**좋은 예:** "PDF 파일 읽기, 텍스트/테이블 추출, 병합, 분할, 회전, 워터마크, 암호화, OCR 등 모든 PDF 작업을 수행. .pdf 파일을 언급하거나 PDF 산출물을 요청하면 반드시 이 스킬을 사용할 것."
+**Good example:** "Perform all PDF tasks, including reading PDF files, text/table extraction, merging, splitting, rotating, watermarking, encryption, and OCR. Use this skill whenever a .pdf file is mentioned or a PDF output is requested."
 
-핵심: 스킬이 하는 일 + 구체적 트리거 상황을 모두 기술하고, 유사하지만 트리거하면 안 되는 경우와 구분되도록 작성.
+Key point: describe both what the skill does and the concrete trigger situations, and distinguish it from similar cases that should not trigger it.
 
-#### 4-3. 본문 작성 원칙
+#### 4-3. Body writing principles
 
-| 원칙 | 설명 |
+| Principle | Description |
 | --- | --- |
-| **Why를 설명하라** | "ALWAYS/NEVER" 같은 강압적 지시 대신, 왜 그렇게 해야 하는지 이유를 전달한다. LLM은 이유를 이해하면 엣지 케이스에서도 올바르게 판단한다. |
-| **Lean하게 유지** | 컨텍스트 윈도우는 공공재다. SKILL.md 본문은 500줄 이내를 목표로, 무게를 벌지 않는 내용은 삭제하거나 references/로 이동한다. |
-| **일반화하라** | 특정 예시에만 맞는 좁은 규칙보다, 원리를 설명하여 다양한 입력에 대응할 수 있게 한다. 오버피팅 금지. |
-| **반복 코드는 번들링** | 테스트 실행에서 에이전트들이 공통으로 작성하는 스크립트가 발견되면 scripts/에 미리 번들링한다. |
-| **명령형으로 작성** | "~한다", "~하라" 형태의 명령형/지시형 어조를 사용한다. |
+| **Explain why** | Instead of coercive instructions like "ALWAYS/NEVER", explain why the rule exists. LLMs make better edge-case decisions when they understand the reason. |
+| **Keep it lean** | The context window is a shared resource. Aim for SKILL.md bodies under 500 lines; remove anything that does not justify its weight or move it to references/. |
+| **Generalize** | Explain principles so the skill handles diverse inputs, instead of narrow rules fitted to one example. Do not overfit. |
+| **Bundle repeated code** | If agents repeatedly write the same helper scripts during tests, bundle them in scripts/. |
+| **Use imperative voice** | Write as instructions using direct imperative wording. |
 
-#### 4-4. Progressive Disclosure (단계적 정보 공개)
+#### 4-4. Progressive Disclosure
 
-스킬은 3단계 로딩 시스템으로 컨텍스트를 관리한다:
+Skills use a three-stage loading system to manage context:
 
-| 단계 | 로딩 시점 | 크기 목표 |
+| Stage | When loaded | Size target |
 | --- | --- | --- |
-| **Metadata** (name + description) | 항상 컨텍스트에 존재 | ~100단어 |
-| **SKILL.md 본문** | 스킬 트리거 시 | <500줄 |
-| **references/** | 필요할 때만 | 무제한 (스크립트는 로딩 없이 실행 가능) |
+| **Metadata** (name + description) | Always present in context | ~100 words |
+| **SKILL.md body** | When the skill triggers | <500 lines |
+| **references/** | Only when needed | Unlimited (scripts can run without being loaded) |
 
-**크기 관리 규칙:**
+**Size management rules:**
 
-- SKILL.md가 500줄에 근접하면 세부 내용을 references/로 분리하고, 본문에 "언제 이 파일을 읽으라"는 포인터를 남긴다
-- 300줄 이상의 reference 파일에는 상단에 **목차(ToC)**를 포함한다
-- 도메인/프레임워크별 변형이 있으면 references/ 하위에 도메인별로 분리하여, 관련 파일만 로드한다
+- When SKILL.md approaches 500 lines, split details into references/ and leave pointers in the body explaining when to read each file.
+- Include a **table of contents (ToC)** at the top of reference files over 300 lines.
+- If there are domain/framework variants, split them into domain-specific files under references/ so only relevant files are loaded.
 
-#### 4-5. 스킬-에이전트 연결 원칙
+#### 4-5. Skill-agent connection principles
 
-- 에이전트 1개 ↔ 스킬 1~N개 (1:1 또는 1:다)
-- 여러 에이전트가 공유하는 스킬도 가능
-- 스킬은 "어떻게 하는가"를 담고, 에이전트는 "누가 하는가"를 담는다
+- One agent ↔ one or more skills (1:1 or 1:N).
+- Multiple agents may share a skill.
+- Skills contain "how to do it"; agents contain "who does it".
 
-> 상세 작성 패턴, 예시, 데이터 스키마 표준은 references/skill-writing-guide.md 참조.
+> For detailed writing patterns, examples, and data schema standards, see references/skill-writing-guide.md.
 
-### Phase 5: 통합 및 오케스트레이션
+### Phase 5: Integration and Orchestration
 
-오케스트레이터는 스킬의 특수한 형태로, 개별 에이전트와 스킬을 하나의 워크플로우로 엮어 전체를 조율한다. 구체적 템플릿은 references/orchestrator-template.md 참조.
+An orchestrator is a special kind of skill that links individual agents and skills into one workflow and coordinates the whole system. See references/orchestrator-template.md for concrete templates.
 
-#### 5-0. 모드별 오케스트레이터 패턴
+#### 5-0. Orchestrator patterns by mode
 
-**Task 병렬 호출 (기본):**
+**Parallel Task calls (default):**
 
-여러 Task를 run_in_background: true로 동시 호출하여 병렬 실행한다. 각 Task 결과는 parent session에서 수신하여 취합한다.
+Call multiple Tasks concurrently with `run_in_background: true`. Receive each Task result in the parent session and aggregate them.
 
 ```text
-[오케스트레이터]
+[orchestrator]
     ├── Task({ name: "agent-1", run_in_background: true })
     ├── Task({ name: "agent-2", run_in_background: true })
-    ├── 모든 Task 완료 대기
-    ├── 결과 취합 및 통합
-    └── 최종 산출물 생성
+    ├── wait for all Tasks to finish
+    ├── collect and integrate results
+    └── create final output
 ```
 
-**Task 순차 호출:**
+**Sequential Task calls:**
 
-이전 Task의 결과를 다음 Task의 입력으로 전달하며 순차 실행한다.
+Pass the previous Task result into the next Task and execute sequentially.
 
 ```text
-[오케스트레이터]
-    ├── Task({ name: "agent-1" }) → 결과: _workspace/01_artifact.md
-    ├── Task({ name: "agent-2", 입력: 01 결과 }) → 결과: _workspace/02_artifact.md
-    └── 결과 통합
+[orchestrator]
+    ├── Task({ name: "agent-1" }) → result: _workspace/01_artifact.md
+    ├── Task({ name: "agent-2", input: 01 result }) → result: _workspace/02_artifact.md
+    └── integrate results
 ```
 
-#### 5-1. 데이터 전달 프로토콜
+#### 5-1. Data handoff protocol
 
-| 전략 | 방식 | 적합한 경우 |
+| Strategy | Method | Best fit |
 | --- | --- | --- |
-| **파일 기반** | _workspace/에 파일을 쓰고 읽음 | 대용량 데이터, 구조화된 산출물, 감사 추적 |
-| **Task 결과 전달** | Task 결과를 다음 Task 입력으로 | 순차 의존성 있는 작업 |
+| **File-based** | Write files to _workspace/ and read them | Large data, structured artifacts, audit trail |
+| **Task result handoff** | Pass Task results as input to the next Task | Work with sequential dependencies |
 
-파일 기반 전달 시 규칙:
+Rules for file-based handoff:
 
-- 작업 디렉토리 하위에 _workspace/ 폴더를 만들어 중간 산출물 저장
-- 파일명 컨벤션: {phase}_{agent}_{artifact}.{ext} (예: 01_analyst_requirements.md)
-- 최종 산출물만 사용자 지정 경로에 출력, 중간 파일(_workspace/)은 보존 (사후 검증·감사 추적용)
+- Create an _workspace/ folder under the working directory and store intermediate artifacts there.
+- Filename convention: {phase}_{agent}_{artifact}.{ext} (example: 01_analyst_requirements.md).
+- Output only the final artifact to the user-specified path; preserve intermediate files (_workspace/) for post-hoc verification and audit trail.
 
-#### 5-2. 에러 핸들링
+#### 5-2. Error handling
 
-오케스트레이터 내에 에러 처리 방안을 포함한다. 핵심 원칙: 1회 재시도 후 재실패 시 해당 결과 없이 진행(보고서에 누락 명시), 상충 데이터는 삭제하지 않고 출처 병기.
+Include an error handling plan in the orchestrator. Core principle: retry once; if retry also fails, proceed without that result and explicitly note the omission in the report. Do not delete conflicting data; cite sources side by side.
 
-> 에러 유형별 전략표와 구현 상세는 references/orchestrator-template.md의 "에러 핸들링" 참조.
+> For the strategy table by error type and implementation details, see "Error handling" in references/orchestrator-template.md.
 
-#### 5-3. 팀 크기 가이드라인
+#### 5-3. Team size guidelines
 
-| 작업 규모 | 권장 태스크 수 | 비고 |
+| Work size | Recommended Task count | Notes |
 | --- | --- | --- |
-| 소규모 (5~10개 작업) | 2~3개 병렬 Task | 태스크당 3~5개 작업 |
-| 중규모 (10~20개 작업) | 3~5개 병렬 Task | 태스크당 4~6개 작업 |
-| 대규모 (20개+ 작업) | 5~7개 병렬 Task | 태스크당 4~5개 작업 |
+| Small (5–10 tasks) | 2–3 parallel Tasks | 3–5 tasks per Task |
+| Medium (10–20 tasks) | 3–5 parallel Tasks | 4–6 tasks per Task |
+| Large (20+ tasks) | 5–7 parallel Tasks | 4–5 tasks per Task |
 
-> 태스크가 많을수록 조율 오버헤드가 커진다. 3개의 집중된 태스크가 5개의 산만한 태스크보다 낫다.
+> More Tasks increase coordination overhead. Three focused Tasks are better than five scattered Tasks.
 
-### Phase 6: 검증 및 테스트
+### Phase 6: Validation and Testing
 
-생성된 하네스를 검증한다. 상세 테스트 방법론은 references/skill-testing-guide.md 참조.
+Validate the generated harness. See references/skill-testing-guide.md for the detailed testing methodology.
 
-#### 6-1. 구조 검증
+#### 6-1. Structure validation
 
-- 모든 에이전트 파일이 올바른 위치에 있는지 확인
-- 스킬의 frontmatter(name, description) 검증
-- Task 호출 패턴 일관성 확인
+- Confirm every agent file is in the correct location.
+- Validate skill frontmatter (`name`, `description`).
+- Confirm Task call pattern consistency.
 
-#### 6-2. 실행 모드별 검증
+#### 6-2. Validation by execution mode
 
-- Task 병렬 모드: run_in_background 설정, 결과 취합 경로 확인
-- Task 순차 모드: Task 간 입력/출력 연결 확인
+- Parallel Task mode: check `run_in_background` settings and result aggregation paths.
+- Sequential Task mode: check input/output connections between Tasks.
 
-#### 6-3. 스킬 실행 테스트
+#### 6-3. Skill execution tests
 
-1. **테스트 프롬프트 작성** — 각 스킬에 대해 2~3개의 현실적인 테스트 프롬프트를 작성한다.
+1. **Write test prompts** — write 2–3 realistic test prompts for each skill.
 
-2. **With-skill vs Without-skill 비교 실행** — 가능하면 스킬 있는 실행과 없는 실행을 병렬로 수행하여 스킬의 부가가치를 확인한다. Task를 두 개씩 실행한다:
-   - **With-skill**: 스킬을 읽고 작업 수행
-   - **Without-skill (baseline)**: 같은 프롬프트를 스킬 없이 수행
+2. **Compare With-skill vs Without-skill runs** — when possible, run with the skill and without the skill in parallel to confirm the skill's added value. Execute two Tasks:
+   - **With-skill**: read the skill and perform the work.
+   - **Without-skill (baseline)**: perform the same prompt without the skill.
 
-3. **결과 평가** — 산출물의 품질을 정성적(사용자 리뷰) + 정량적(assertion 기반) 으로 평가한다.
+3. **Evaluate results** — evaluate artifact quality qualitatively (user review) and quantitatively (assertion-based).
 
-4. **반복 개선 루프** — 테스트 결과에서 문제가 발견되면 일반화하여 스킬을 수정하고 재테스트한다.
+4. **Iterative improvement loop** — when test results reveal issues, generalize the fix into the skill and retest.
 
-5. **반복 패턴 번들링** — 테스트 실행에서 공통으로 작성하는 코드를 scripts/에 미리 번들링한다.
+5. **Bundle repeated patterns** — if tests repeatedly create the same code, bundle it under scripts/.
 
-#### 6-4. 트리거 검증
+#### 6-4. Trigger validation
 
-각 스킬의 description이 올바르게 트리거되는지 검증한다:
+Validate that each skill's description triggers correctly:
 
-1. **Should-trigger 쿼리** (8~10개) — 스킬을 트리거해야 하는 다양한 표현
-2. **Should-NOT-trigger 쿼리** (8~10개) — 키워드가 유사하지만 다른 도구/스킬이 적합한 "near-miss" 쿼리
+1. **Should-trigger queries** (8–10) — varied expressions that should trigger the skill.
+2. **Should-NOT-trigger queries** (8–10) — near-miss queries with similar keywords where another tool/skill is more appropriate.
 
-**near-miss 작성 핵심:** "피보나치 함수 작성" 같이 명백히 무관한 쿼리는 테스트 가치가 없다. **경계가 모호한 쿼리**가 좋은 테스트 케이스다.
+**Key point for near-misses:** obviously unrelated queries such as "write a Fibonacci function" have little test value. **Ambiguous boundary queries** make better test cases.
 
-#### 6-5. 드라이런 테스트
+#### 6-5. Dry-run tests
 
-- 오케스트레이터 스킬의 Phase 순서가 논리적인지 검토
-- 데이터 전달 경로에 빈 구간(dead link)이 없는지 확인
-- 모든 Task의 입력이 이전 Phase의 출력과 매칭되는지 확인
+- Review whether the orchestrator skill's Phase order is logical.
+- Check for dead links in data handoff paths.
+- Confirm every Task input matches the previous Phase output.
 
-#### 6-6. 테스트 시나리오 작성
+#### 6-6. Write test scenarios
 
-- 오케스트레이터 스킬에 ## 테스트 시나리오 섹션 추가
-- 정상 흐름 1개 + 에러 흐름 1개 이상 기술
+- Add a `## Test Scenarios` section to the orchestrator skill.
+- Include one happy path and at least one error path.
 
-## 산출물 체크리스트
+## Output Checklist
 
-생성 완료 후 확인:
+After generation, confirm:
 
-- [ ] `.opencode/agents/{{AGENT_NAME}}.md` — **에이전트 정의 파일 필수 생성** (빌트인 타입이라도 파일 생성 필수)
-- [ ] `.opencode/skills/{{SKILL_NAME}}/SKILL.md` — 스킬 파일들 (SKILL.md + references/)
-- [ ] `.agents/skills/{{SKILL_NAME}}/SKILL.md` — 휴대용 호환이 필요할 때만 생성
-- [ ] 오케스트레이터 스킬 1개 (데이터 흐름 + 에러 핸들링 + 테스트 시나리오 포함)
-- [ ] 실행 모드 명시 (Task 병렬 또는 순차)
-- [ ] 모든 Task 호출에 model: "{provider/model}" 파라미터 명시
-- [ ] 기존 에이전트/스킬과 충돌 없음
-- [ ] 스킬 description이 적극적("pushy")으로 작성됨
-- [ ] SKILL.md 본문이 500줄 이내, 초과 시 references/ 분리
-- [ ] 테스트 프롬프트 2~3개로 실행 검증 완료
-- [ ] 트리거 검증 (should-trigger + should-NOT-trigger) 완료
+- [ ] `.opencode/agents/{{AGENT_NAME}}.md` — **agent definition file is required** (even for built-in types)
+- [ ] `.opencode/skills/{{SKILL_NAME}}/SKILL.md` — skill files (SKILL.md + references/)
+- [ ] `.agents/skills/{{SKILL_NAME}}/SKILL.md` — only when portable compatibility is needed
+- [ ] One orchestrator skill (including data flow, error handling, and test scenarios)
+- [ ] Execution mode is explicit (parallel or sequential Task)
+- [ ] Every Task call includes the `model: "{provider/model}"` parameter
+- [ ] No conflicts with existing agents/skills
+- [ ] Skill descriptions are written actively ("pushy")
+- [ ] SKILL.md body is under 500 lines, with excess split into references/
+- [ ] Execution validated with 2–3 test prompts
+- [ ] Trigger validation complete (should-trigger + should-NOT-trigger)
 
-## 참고
+## References
 
-- 하네스 패턴: references/agent-design-patterns.md
-- 기존 하네스 예시: references/team-examples.md
-- 오케스트레이터 템플릿: references/orchestrator-template.md
-- **스킬 작성 가이드**: references/skill-writing-guide.md
-- **스킬 테스트 가이드**: references/skill-testing-guide.md
-- **QA 에이전트 가이드**: references/qa-agent-guide.md
+- Harness patterns: references/agent-design-patterns.md
+- Existing harness examples: references/team-examples.md
+- Orchestrator template: references/orchestrator-template.md
+- **Skill writing guide**: references/skill-writing-guide.md
+- **Skill testing guide**: references/skill-testing-guide.md
+- **QA agent guide**: references/qa-agent-guide.md
