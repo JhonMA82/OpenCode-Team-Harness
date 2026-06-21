@@ -14,11 +14,13 @@ metadata:
 
 # Harness — Agent & Skill Architect
 
-A meta skill that configures a harness for a domain/project, defines each agent's role, and creates the skills those agents use.
+A meta skill that configures a harness for a domain/project, defines each agent's role, and creates
+the skills those agents use.
 
 **Core principles:**
 
-1. Create agent definitions (`.opencode/agents/{{AGENT_NAME}}.md`) and skills (`.opencode/skills/{{SKILL_NAME}}/SKILL.md`).
+1. Create agent definitions (`.opencode/agents/{{AGENT_NAME}}.md`) and skills
+   (`.opencode/skills/{{SKILL_NAME}}/SKILL.md`).
 2. **Use parallel/sequential Task tool calls as the default execution mode.**
 
 ## Workflow
@@ -28,20 +30,25 @@ A meta skill that configures a harness for a domain/project, defines each agent'
 2. Identify the core work types (generation, validation, editing, analysis, etc.).
 3. Check existing agents/skills to prevent conflicts and duplication.
 4. Explore the project codebase — understand the tech stack, data models, and major modules.
-5. **Detect user proficiency** — infer technical level from conversational clues (terminology used, question depth), then adjust communication tone. Do not use terms like "assertion" or "JSON schema" with less experienced users without explaining them.
+5. **Detect user proficiency** — infer technical level from conversational clues (terminology used,
+   question depth), then adjust communication tone. Do not use terms like "assertion" or "JSON
+   schema" with less experienced users without explaining them.
 
 ### Phase 2: Task Architecture Design
 
 #### 2-1. Choose execution mode: parallel vs sequential Task
 
-**The default is parallel Task calls.** When two or more agents can perform independent work in parallel, call Task concurrently with `run_in_background: true`. Receive each Task result in the parent session and aggregate them.
+**The default is parallel Task calls.** When two or more agents can perform independent work in
+parallel, call Task concurrently with `run_in_background: true`. Receive each Task result in the
+parent session and aggregate them.
 
 Use sequential calls when a previous Task result is required as input for the next Task.
 
 #### 2-2. Choose architecture pattern
 
 1. Decompose the work into specialist areas.
-2. Decide the Task call structure (see architecture patterns in references/agent-design-patterns.md).
+2. Decide the Task call structure (see architecture patterns in
+   references/agent-design-patterns.md).
    - **Pipeline**: sequential dependent work
    - **Fan-out/Fan-in**: parallel independent work
    - **Expert Pool**: choose specialists by situation
@@ -50,7 +57,8 @@ Use sequential calls when a previous Task result is required as input for the ne
 
 #### 2-3. Agent separation criteria
 
-Evaluate across four axes: specialization, parallelism, context, and reusability. See the "Agent separation criteria" table in references/agent-design-patterns.md for details.
+Evaluate across four axes: specialization, parallelism, context, and reusability. See the "Agent
+separation criteria" table in references/agent-design-patterns.md for details.
 
 #### Task tool default parameters
 
@@ -87,30 +95,42 @@ Task({
 
 ### Phase 3: Create Agent Definitions
 
-**Every agent MUST be defined as a `.opencode/agents/{{AGENT_NAME}}.md` file.** Do not put roles directly into Task tool prompts. Reasons:
+**Every agent MUST be defined as a `.opencode/agents/{{AGENT_NAME}}.md` file.** Do not put roles
+directly into Task tool prompts. Reasons:
 
 - Agent definitions must exist as files so they can be reused in later sessions.
 - Task collaboration protocols must be explicit to ensure high-quality aggregation.
 - The harness's core value is separating agents (who) from skills (how).
 
-Even when using built-in types (`general-purpose`, `Explore`, `Plan`), create an agent definition file. Specify it through the Task tool `name` parameter, and put the role and principles in the agent definition file.
+Even when using built-in types (`general-purpose`, `Explore`, `Plan`), create an agent definition
+file. Specify it through the Task tool `name` parameter, and put the role and principles in the
+agent definition file.
 
-**Model setting:** Set the `model` parameter in `provider/model` format. Use a model configured in the user's OpenCode config. Examples: `anthropic/claude-sonnet-4-20250514`, `openrouter/minimax/minimax-m2.7`.
+**Model setting:** Set the `model` parameter in `provider/model` format. Use a model configured in
+the user's OpenCode config. Examples: `anthropic/claude-sonnet-4-20250514`,
+`openrouter/minimax/minimax-m2.7`.
 
-Define each agent in `.opencode/agents/{{AGENT_NAME}}.md`. Required sections: core responsibilities, working principles, input/output protocol, and error handling.
+Define each agent in `.opencode/agents/{{AGENT_NAME}}.md`. Required sections: core responsibilities,
+working principles, input/output protocol, and error handling.
 
-> For the definition template and full examples, see "Agent definition structure" in references/agent-design-patterns.md and references/team-examples.md.
+> For the definition template and full examples, see "Agent definition structure" in
+> references/agent-design-patterns.md and references/team-examples.md.
 
 **Required when including a QA agent:**
 
-- Use the `general-purpose` type for QA agents (`Explore` is read-only, so it cannot run validation scripts).
-- QA is not about "existence checks"; its core is **cross-boundary comparison** — read API responses and frontend hooks together, then compare their shapes.
-- Run QA incrementally **immediately after each module is completed**, not only once after the whole system is finished.
+- Use the `general-purpose` type for QA agents (`Explore` is read-only, so it cannot run validation
+  scripts).
+- QA is not about "existence checks"; its core is **cross-boundary comparison** — read API responses
+  and frontend hooks together, then compare their shapes.
+- Run QA incrementally **immediately after each module is completed**, not only once after the whole
+  system is finished.
 - Detailed guide: references/qa-agent-guide.md.
 
 ### Phase 4: Create Skills
 
-Create each agent's skills in `.opencode/skills/{{SKILL_NAME}}/SKILL.md`. If portable compatibility is needed, mirror them under `.agents/skills/{{SKILL_NAME}}/SKILL.md`. See references/skill-writing-guide.md for the detailed writing guide.
+Create each agent's skills in `.opencode/skills/{{SKILL_NAME}}/SKILL.md`. If portable compatibility
+is needed, mirror them under `.agents/skills/{{SKILL_NAME}}/SKILL.md`. See
+references/skill-writing-guide.md for the detailed writing guide.
 
 #### 4-1. Skill structure
 
@@ -127,13 +147,18 @@ skill-name/
 
 #### 4-2. Writing descriptions — encourage active triggering
 
-The `description` is the skill's main trigger mechanism. OpenCode does not rely on a `trigger:` frontmatter key, so put trigger information in the description, metadata, or body. Write descriptions **actively ("pushy")**.
+The `description` is the skill's main trigger mechanism. OpenCode does not rely on a `trigger:`
+frontmatter key, so put trigger information in the description, metadata, or body. Write
+descriptions **actively ("pushy")**.
 
 **Bad example:** "A skill for processing PDF documents"
 
-**Good example:** "Perform all PDF tasks, including reading PDF files, text/table extraction, merging, splitting, rotating, watermarking, encryption, and OCR. Use this skill whenever a .pdf file is mentioned or a PDF output is requested."
+**Good example:** "Perform all PDF tasks, including reading PDF files, text/table extraction,
+merging, splitting, rotating, watermarking, encryption, and OCR. Use this skill whenever a .pdf file
+is mentioned or a PDF output is requested."
 
-Key point: describe both what the skill does and the concrete trigger situations, and distinguish it from similar cases that should not trigger it.
+Key point: describe both what the skill does and the concrete trigger situations, and distinguish it
+from similar cases that should not trigger it.
 
 #### 4-3. Body writing principles
 
@@ -157,9 +182,11 @@ Skills use a three-stage loading system to manage context:
 
 **Size management rules:**
 
-- When SKILL.md approaches 500 lines, split details into references/ and leave pointers in the body explaining when to read each file.
+- When SKILL.md approaches 500 lines, split details into references/ and leave pointers in the body
+  explaining when to read each file.
 - Include a **table of contents (ToC)** at the top of reference files over 300 lines.
-- If there are domain/framework variants, split them into domain-specific files under references/ so only relevant files are loaded.
+- If there are domain/framework variants, split them into domain-specific files under references/ so
+  only relevant files are loaded.
 
 #### 4-5. Skill-agent connection principles
 
@@ -167,17 +194,20 @@ Skills use a three-stage loading system to manage context:
 - Multiple agents may share a skill.
 - Skills contain "how to do it"; agents contain "who does it".
 
-> For detailed writing patterns, examples, and data schema standards, see references/skill-writing-guide.md.
+> For detailed writing patterns, examples, and data schema standards, see
+> references/skill-writing-guide.md.
 
 ### Phase 5: Integration and Orchestration
 
-An orchestrator is a special kind of skill that links individual agents and skills into one workflow and coordinates the whole system. See references/orchestrator-template.md for concrete templates.
+An orchestrator is a special kind of skill that links individual agents and skills into one workflow
+and coordinates the whole system. See references/orchestrator-template.md for concrete templates.
 
 #### 5-0. Orchestrator patterns by mode
 
 **Parallel Task calls (default):**
 
-Call multiple Tasks concurrently with `run_in_background: true`. Receive each Task result in the parent session and aggregate them.
+Call multiple Tasks concurrently with `run_in_background: true`. Receive each Task result in the
+parent session and aggregate them.
 
 ```text
 [orchestrator]
@@ -210,13 +240,17 @@ Rules for file-based handoff:
 
 - Create an _workspace/ folder under the working directory and store intermediate artifacts there.
 - Filename convention: {phase}_{agent}_{artifact}.{ext} (example: 01_analyst_requirements.md).
-- Output only the final artifact to the user-specified path; preserve intermediate files (_workspace/) for post-hoc verification and audit trail.
+- Output only the final artifact to the user-specified path; preserve intermediate files
+  (_workspace/) for post-hoc verification and audit trail.
 
 #### 5-2. Error handling
 
-Include an error handling plan in the orchestrator. Core principle: retry once; if retry also fails, proceed without that result and explicitly note the omission in the report. Do not delete conflicting data; cite sources side by side.
+Include an error handling plan in the orchestrator. Core principle: retry once; if retry also fails,
+proceed without that result and explicitly note the omission in the report. Do not delete
+conflicting data; cite sources side by side.
 
-> For the strategy table by error type and implementation details, see "Error handling" in references/orchestrator-template.md.
+> For the strategy table by error type and implementation details, see "Error handling" in
+> references/orchestrator-template.md.
 
 #### 5-3. Team size guidelines
 
@@ -226,11 +260,13 @@ Include an error handling plan in the orchestrator. Core principle: retry once; 
 | Medium (10–20 tasks) | 3–5 parallel Tasks | 4–6 tasks per Task |
 | Large (20+ tasks) | 5–7 parallel Tasks | 4–5 tasks per Task |
 
-> More Tasks increase coordination overhead. Three focused Tasks are better than five scattered Tasks.
+> More Tasks increase coordination overhead. Three focused Tasks are better than five scattered
+> Tasks.
 
 ### Phase 6: Validation and Testing
 
-Validate the generated harness. See references/skill-testing-guide.md for the detailed testing methodology.
+Validate the generated harness. See references/skill-testing-guide.md for the detailed testing
+methodology.
 
 #### 6-1. Structure validation
 
@@ -247,24 +283,30 @@ Validate the generated harness. See references/skill-testing-guide.md for the de
 
 1. **Write test prompts** — write 2–3 realistic test prompts for each skill.
 
-2. **Compare With-skill vs Without-skill runs** — when possible, run with the skill and without the skill in parallel to confirm the skill's added value. Execute two Tasks:
+2. **Compare With-skill vs Without-skill runs** — when possible, run with the skill and without the
+   skill in parallel to confirm the skill's added value. Execute two Tasks:
    - **With-skill**: read the skill and perform the work.
    - **Without-skill (baseline)**: perform the same prompt without the skill.
 
-3. **Evaluate results** — evaluate artifact quality qualitatively (user review) and quantitatively (assertion-based).
+3. **Evaluate results** — evaluate artifact quality qualitatively (user review) and quantitatively
+   (assertion-based).
 
-4. **Iterative improvement loop** — when test results reveal issues, generalize the fix into the skill and retest.
+4. **Iterative improvement loop** — when test results reveal issues, generalize the fix into the
+   skill and retest.
 
-5. **Bundle repeated patterns** — if tests repeatedly create the same code, bundle it under scripts/.
+5. **Bundle repeated patterns** — if tests repeatedly create the same code, bundle it under
+   scripts/.
 
 #### 6-4. Trigger validation
 
 Validate that each skill's description triggers correctly:
 
 1. **Should-trigger queries** (8–10) — varied expressions that should trigger the skill.
-2. **Should-NOT-trigger queries** (8–10) — near-miss queries with similar keywords where another tool/skill is more appropriate.
+2. **Should-NOT-trigger queries** (8–10) — near-miss queries with similar keywords where another
+   tool/skill is more appropriate.
 
-**Key point for near-misses:** obviously unrelated queries such as "write a Fibonacci function" have little test value. **Ambiguous boundary queries** make better test cases.
+**Key point for near-misses:** obviously unrelated queries such as "write a Fibonacci function" have
+little test value. **Ambiguous boundary queries** make better test cases.
 
 #### 6-5. Dry-run tests
 
@@ -281,7 +323,8 @@ Validate that each skill's description triggers correctly:
 
 After generation, confirm:
 
-- [ ] `.opencode/agents/{{AGENT_NAME}}.md` — **agent definition file is required** (even for built-in types)
+- [ ] `.opencode/agents/{{AGENT_NAME}}.md` — **agent definition file is required** (even for
+  built-in types)
 - [ ] `.opencode/skills/{{SKILL_NAME}}/SKILL.md` — skill files (SKILL.md + references/)
 - [ ] `.agents/skills/{{SKILL_NAME}}/SKILL.md` — only when portable compatibility is needed
 - [ ] One orchestrator skill (including data flow, error handling, and test scenarios)

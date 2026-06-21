@@ -5,11 +5,13 @@
 -->
 # OpenCode Team Harness
 
-OpenCode Team Harness is a meta-skill for generating structured OpenCode agent teams in consumer projects.
+OpenCode Team Harness is a meta-skill for generating structured OpenCode agent teams in consumer
+projects.
 
 ## Purpose
 
-The harness acts as the orchestrator for a generated team. It analyzes the target project, chooses an agent-team shape, and writes deterministic OpenCode artifacts.
+The harness acts as the orchestrator for a generated team. It analyzes the target project, chooses
+an agent-team shape, and writes deterministic OpenCode artifacts.
 
 ## Generated outputs
 
@@ -31,7 +33,8 @@ The harness acts as the orchestrator for a generated team. It analyzes the targe
 
 ## Usage
 
-Invoke Harness from a consumer project. The meta-skill prompts for project context, fills templates, and writes generated artifacts into that consumer project's directory.
+Invoke Harness from a consumer project. The meta-skill prompts for project context, fills templates,
+and writes generated artifacts into that consumer project's directory.
 
 ## References
 

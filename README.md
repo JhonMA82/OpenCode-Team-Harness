@@ -7,7 +7,8 @@
   <img src="https://img.shields.io/badge/Cambio-Agentes→Tareas_Paralelas-red.svg" alt="Cambio de arquitectura">
 </p>
 
-> ⚠️ **Port a OpenCode**: Versión adaptada a OpenCode de [revfactory/harness](https://github.com/JhonMA82/OpenCode-Team-Harness).
+> ⚠️ **Port a OpenCode**: Versión adaptada a OpenCode de
+> [revfactory/harness](https://github.com/JhonMA82/OpenCode-Team-Harness).
 >
 > - **Arquitectura**: Equipos de agentes → tareas paralelas
 > - **Compatibilidad**: Solo OpenCode (NO compatible con Claude Code)
@@ -26,7 +27,8 @@
 
 **Arquitecto de Equipos y Skills** — Skill de OpenCode
 
-Un meta-skill que diseña equipos de agentes especializados por dominio, define agentes y genera las skills que utilizan.
+Un meta-skill que diseña equipos de agentes especializados por dominio, define agentes y genera las
+skills que utilizan.
 
 ## Visión General
 
@@ -244,7 +246,8 @@ agentes LLM.
 Hallazgo clave: la efectividad escala con la complejidad de la tarea — cuanto
 más difícil, mayor la mejora (+23.8 Básico, +29.6 Avanzado, +36.2 Experto).
 
-> Artículo completo: *Hwang, M. (2026). Harness: Structured Pre-Configuration for Enhancing LLM Code Agent Output Quality.*
+> Artículo completo: *Hwang, M. (2026). Harness: Structured Pre-Configuration for Enhancing LLM Code
+> Agent Output Quality.*
 
 ## Requisitos
 

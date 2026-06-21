@@ -8,7 +8,8 @@
 > **Purpose**: Illustrate the structure of a generated agent team for the real MezaOS stack.
 > **Status**: Reference only — NOT a runtime dependency (AG-7).
 
-This directory contains a reference example of what `skills/harness/` generates when invoked for a MezaOS project. Use it as a template to understand the output format.
+This directory contains a reference example of what `skills/harness/` generates when invoked for a
+MezaOS project. Use it as a template to understand the output format.
 
 ## Team Overview
 
