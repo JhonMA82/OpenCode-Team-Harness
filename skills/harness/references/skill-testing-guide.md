@@ -74,13 +74,13 @@ For each test prompt, run two Tasks **at the same time**:
 
 **With-skill run:**
 
-Task({ name: "general", prompt: "{테스트 프롬프트}", model: "{provider/model}", skill: "{스킬 이름}" })
+Task({ name: "general", prompt: "{test prompt}", model: "{provider/model}", skill: "{skill name}" })
 Output path: _workspace/iteration-N/eval-{id}/with_skill/outputs/
 
 
 **Baseline run:**
 
-Task({ name: "general", prompt: "{테스트 프롬프트}", model: "{provider/model}" })
+Task({ name: "general", prompt: "{test prompt}", model: "{provider/model}" })
 Output path: _workspace/iteration-N/eval-{id}/without_skill/outputs/
 
 

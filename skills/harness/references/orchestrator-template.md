@@ -11,12 +11,12 @@ Call Tasks concurrently with `run_in_background: true` for parallel execution.
 markdown
 ---
 name: {domain}-orchestrator
-description: "Orchestrator that coordinates the {도메인} workflow. {트리거 키워드}."
+description: "Orchestrator that coordinates the {domain} workflow. {trigger keywords}."
 ---
 
 # {Domain} Orchestrator
 
-An integration skill that coordinates Tasks for {도메인} and creates {최종 산출물}.
+An integration skill that coordinates Tasks for {domain} and creates {final deliverable}.
 
 ## Execution mode: Parallel Task calls
 
@@ -24,14 +24,14 @@ An integration skill that coordinates Tasks for {도메인} and creates {최종 
 
 | Agent | Role | Skill | Output |
 |---------|------|------|------|
-| {agent-1} | {역할} | {skill} | _workspace/01_{agent-1}.md |
-| {agent-2} | {역할} | {skill} | _workspace/02_{agent-2}.md |
+| {agent-1} | {role} | {skill} | _workspace/01_{agent-1}.md |
+| {agent-2} | {role} | {skill} | _workspace/02_{agent-2}.md |
 | ... | | | |
 
 ## Workflow
 
 ### Phase 1: Preparation
-1. Analyze user input — {무엇을 파악하는지}
+1. Analyze user input — {what to analyze}
 2. Create _workspace/ in the working directory
 3. Save input data under _workspace/00_input/
 
@@ -41,9 +41,9 @@ An integration skill that coordinates Tasks for {도메인} and creates {최종 
 
 Call all Tasks concurrently:
 
-Task({ name: "agent-1", prompt: "{역할 설명 및 작업 지시}", model: "{provider/model}", run_in_background: true })
-Task({ name: "agent-2", prompt: "{역할 설명 및 작업 지시}", model: "{provider/model}", run_in_background: true })
-Task({ name: "agent-3", prompt: "{역할 설명 및 작업 지시}", model: "{provider/model}", run_in_background: true })
+Task({ name: "agent-1", prompt: "{role description and task instructions}", model: "{provider/model}", run_in_background: true })
+Task({ name: "agent-2", prompt: "{role description and task instructions}", model: "{provider/model}", run_in_background: true })
+Task({ name: "agent-3", prompt: "{role description and task instructions}", model: "{provider/model}", run_in_background: true })
 
 
 Wait for all Tasks to finish → collect results
@@ -57,7 +57,7 @@ Wait for all Tasks to finish → collect results
 
 ### Phase 3: Collect and integrate results
 1. Read all Task results.
-2. {통합/검증 로직}
+2. {integration/validation logic}
 3. Create final artifact: {output-path}/{filename}
 
 ### Phase 4: Cleanup
@@ -92,8 +92,8 @@ Wait for all Tasks to finish → collect results
 ## Test Scenarios
 
 ### Happy path
-1. User provides {입력}.
-2. Phase 1 produces {분석 결과}.
+1. User provides {input}.
+2. Phase 1 produces {analysis result}.
 3. Phase 2 runs {N} Tasks in parallel.
 4. Phase 3 integrates artifacts and creates the final result.
 5. Expected result: {output-path}/{filename} is created.
@@ -114,12 +114,12 @@ Pass each previous Task result into the next Task and execute sequentially.
 markdown
 ---
 name: {domain}-orchestrator
-description: "Orchestrator that coordinates the {도메인} workflow. {트리거 키워드}."
+description: "Orchestrator that coordinates the {domain} workflow. {trigger keywords}."
 ---
 
 # {Domain} Orchestrator
 
-An integration skill that sequentially coordinates Tasks for {도메인} and creates {최종 산출물}.
+An integration skill that sequentially coordinates Tasks for {domain} and creates {final deliverable}.
 
 ## Execution mode: Sequential Task calls
 
@@ -127,14 +127,14 @@ An integration skill that sequentially coordinates Tasks for {도메인} and cre
 
 | Agent | Role | Skill | Output |
 |---------|------|------|------|
-| {agent-1} | {역할} | {skill} | _workspace/01_{agent-1}.md |
-| {agent-2} | {역할} | {skill} | _workspace/02_{agent-2}.md |
+| {agent-1} | {role} | {skill} | _workspace/01_{agent-1}.md |
+| {agent-2} | {role} | {skill} | _workspace/02_{agent-2}.md |
 | ... | | | |
 
 ## Workflow
 
 ### Phase 1: Preparation
-1. Analyze user input — {무엇을 파악하는지}
+1. Analyze user input — {what to analyze}
 2. Create _workspace/ in the working directory
 3. Save input data under _workspace/00_input/
 
@@ -142,19 +142,19 @@ An integration skill that sequentially coordinates Tasks for {도메인} and cre
 
 Pass the previous Task result as input to the next Task:
 
-Phase 2-1: Task({ name: "agent-1", prompt: "{역할 설명}", model: "{provider/model}" })
+Phase 2-1: Task({ name: "agent-1", prompt: "{role description}", model: "{provider/model}" })
 → result: _workspace/01_agent-1.md
 
-Phase 2-2: Task({ name: "agent-2", prompt: "{역할 설명}. Input: refer to _workspace/01_agent-1.md", model: "{provider/model}" })
+Phase 2-2: Task({ name: "agent-2", prompt: "{role description}. Input: refer to _workspace/01_agent-1.md", model: "{provider/model}" })
 → result: _workspace/02_agent-2.md
 
-Phase 2-3: Task({ name: "agent-3", prompt: "{역할 설명}. Input: refer to _workspace/02_agent-2.md", model: "{provider/model}" })
+Phase 2-3: Task({ name: "agent-3", prompt: "{role description}. Input: refer to _workspace/02_agent-2.md", model: "{provider/model}" })
 → result: _workspace/03_agent-3.md
 
 
 ### Phase 3: Final integration
 1. Read the final Task result.
-2. {최종 통합/검증 로직}
+2. {final integration/validation logic}
 3. Create final artifact: {output-path}/{filename}
 
 ### Phase 4: Cleanup
@@ -191,8 +191,8 @@ Phase 2-3: Task({ name: "agent-3", prompt: "{역할 설명}. Input: refer to _wo
 ## Test Scenarios
 
 ### Happy path
-1. User provides {입력}.
-2. Phase 1 produces {분석 결과}.
+1. User provides {input}.
+2. Phase 1 produces {analysis result}.
 3. Phase 2 runs {N} Tasks sequentially.
 4. Phase 3 creates the final result.
 5. Expected result: {output-path}/{filename} is created.
