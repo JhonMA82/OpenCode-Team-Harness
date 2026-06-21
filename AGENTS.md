@@ -5,18 +5,20 @@
 -->
 # OpenCode Team Harness
 
+OpenCode Team Harness is a meta-skill for generating structured OpenCode agent teams in consumer projects.
+
 ## Purpose
 
-**Orchestrator agent**: Generates structured agent teams for OpenCode projects.
+The harness acts as the orchestrator for a generated team. It analyzes the target project, chooses an agent-team shape, and writes deterministic OpenCode artifacts.
 
-This repository contains the meta-skill at `skills/harness/SKILL.md`. When invoked from a consumer project, it generates:
+## Generated outputs
 
-## Outputs
-
-- `AGENTS.md` — team entry point with role definitions.
-- `.opencode/agents/{{AGENT_NAME}}.md` — individual agent specs.
-- `.opencode/skills/{{SKILL_NAME}}/SKILL.md` — domain skills per agent.
-- `.agents/skills/{{SKILL_NAME}}/SKILL.md` — optional portable skill mirror.
+| Output | Purpose |
+| --- | --- |
+| `AGENTS.md` | Team entry point with role definitions. |
+| `.opencode/agents/{{AGENT_NAME}}.md` | Individual OpenCode agent definitions. |
+| `.opencode/skills/{{SKILL_NAME}}/SKILL.md` | Authoritative project skill definitions. |
+| `.agents/skills/{{SKILL_NAME}}/SKILL.md` | Optional portable skill mirror. |
 
 ## Generated agent roles
 

@@ -3,38 +3,67 @@
 -->
 # OpenCode Compatibility
 
-> **Purpose**: Document how the OpenCode Team Harness integrates with OpenCode.
+This document explains how OpenCode Team Harness integrates with OpenCode and which installation mode is recommended.
 
 ## Requirements
 
-- **OpenCode 0.x+** — the harness uses the `task` tool for agent dispatch and standard I/O for communication
-- **File system** — generated artifacts are plain markdown files placed in the consumer project's `.opencode/` directory
-- **No runtime dependencies** — the harness is a meta-skill, not a daemon or CLI tool
+- **OpenCode 0.x+** — the harness uses OpenCode project files and task delegation.
+- **File system access** — generated artifacts are plain Markdown files in the consumer project's `.opencode/` directory.
+- **No runtime dependencies** — the harness is a meta-skill, not a daemon, service, or runtime AI component.
 
-## Integration Points
+## Recommended installation
 
-### 1. Agent Definitions
+Install the harness locally in each consumer project:
 
-OpenCode reads agent definitions from `AGENTS.md` at the project root and individual agent files from `.opencode/agents/`. The harness generates both.
+```shell
+mkdir -p .opencode/skills
+cp -r /path/to/OpenCode-Team-Harness/skills/harness .opencode/skills/harness
+```
+
+Local per-project installation is recommended because the generated team, prompts, and skill behavior stay versioned with the repository they support.
+
+## Advanced installation
+
+Global installation is possible for advanced users who intentionally want the same harness available across projects:
+
+```shell
+mkdir -p ~/.config/opencode/skills
+cp -r /path/to/OpenCode-Team-Harness/skills/harness ~/.config/opencode/skills/harness
+```
+
+Use the global path only when shared behavior across projects is intentional. Project-local skills remain easier to review, pin, and audit.
+
+## Integration points
+
+### 1. Agent definitions
+
+OpenCode uses project instructions from `AGENTS.md` and can load individual agent files from `.opencode/agents/`. The harness generates both.
 
 ### 2. Skills
 
-OpenCode loads project skills from `.opencode/skills/{{SKILL_NAME}}/SKILL.md`. The harness generates these with proper frontmatter that OpenCode can parse.
+OpenCode loads project skills from `.opencode/skills/{{SKILL_NAME}}/SKILL.md`. The harness generates valid `SKILL.md` files with YAML frontmatter that OpenCode can parse.
 
-### 3. Tool Access
+### 3. Tool access
 
-Generated agents use only OpenCode's built-in tools — `task`, `read`, `write`, `grep`, `bash`. No external tooling is required.
+Generated agents use OpenCode's built-in tools. No external tooling is required, and no external service, daemon, or runtime AI dependency is required by the generated artifacts.
 
-## Migration from Claude Code
+## Migration from another agent setup
 
-If you are migrating from a Claude Code project:
+If you are migrating an existing project:
 
-1. Copy `skills/harness/` to `.opencode/skills/harness/` inside the consumer project
-2. Install OpenCode (see [OpenCode docs](https://github.com/JhonMA82/OpenCode-Team-Harness))
-3. Invoke the harness skill from within your consumer project
-4. Generated output goes to `.opencode/`, keeping your existing `.claude/` config untouched
+1. Install OpenCode using the [official installation guide](https://opencode.ai/docs/#install).
+2. Copy `skills/harness/` to `.opencode/skills/harness/` inside the consumer project.
+3. Invoke the harness skill from within your consumer project.
+4. Review generated output under `.opencode/` before committing it.
 
-## Known Limitations
+## Official OpenCode references
 
-- OpenCode does not support `/plugin marketplace add` — skills are loaded from the filesystem
-- OpenCode's `AGENTS.md` format may differ from Claude Code's `AGENTS.md` in trigger syntax — check the [OpenCode documentation](https://github.com/JhonMA82/OpenCode-Team-Harness) for the latest format
+- [OpenCode docs](https://opencode.ai/docs/)
+- [OpenCode config](https://opencode.ai/docs/config/)
+- [OpenCode agents](https://opencode.ai/docs/agents/)
+- [OpenCode skills](https://opencode.ai/docs/skills/)
+
+## Known limitations
+
+- OpenCode skills are loaded from the filesystem; this harness does not require a plugin marketplace.
+- `trigger:` is not a required skill frontmatter key. Put trigger guidance in `description`, `metadata`, or the skill body.

@@ -1,8 +1,12 @@
 ---
 name: "{{SKILL_NAME}}"
-description: "{{SKILL_DESCRIPTION}} Use when: {{TRIGGER_CONDITION}}"
+description: >-
+  {{SKILL_DESCRIPTION}}
+compatibility:
+  opencode: ">=0.x"
 metadata:
-  use_when: "{{TRIGGER_CONDITION}}"
+  trigger_guidance: "{{TRIGGER_CONDITION}}"
+  deterministic: "true"
 ---
 
 # {{SKILL_NAME}}
@@ -17,7 +21,9 @@ metadata:
 
 ## Trigger guidance
 
-Use this skill when: {{TRIGGER_CONDITION}}
+Use this skill when the user request matches this condition:
+
+> {{TRIGGER_CONDITION}}
 
 ## References
 
